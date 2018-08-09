@@ -1,0 +1,5 @@
+load("/Users/arhart/Research/MSE_Graphics/decisiontable/data/Color_TestMatrix_Ncol_1_Nrow_1.RData")
+load("/Users/arhart/Research/MSE_Graphics/decisiontable/data/Color_TestMatrix_Ncol_1_Nrow_12.Rdata")
+load("/Users/arhart/Research/MSE_Graphics/decisiontable/data/Color_TestMatrix_Ncol_1_Nrow_1.RData")
+load("/Users/arhart/Research/MSE_Graphics/decisiontable/data/Color_TestMatrix_Ncol_1_Nrow_11.Rdata")
+load("/Users/arhart/Research/MSE_Graphics/decisiontable/data/Color_TestMatrix_Ncol_1_Nrow_12.Rdata")

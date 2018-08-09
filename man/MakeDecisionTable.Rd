@@ -2,15 +2,16 @@
 % Please edit documentation in R/GeneralDecisionTableFunction.R
 \name{MakeDecisionTable}
 \alias{MakeDecisionTable}
-\title{Produce generalized decision tables.}
+\title{Produce generalized decision tables with provided confidence intervals (optional) on bars.}
 \usage{
-MakeDecisionTable(Data = NULL, BestPerformanceVector = NULL,
-  SummaryBestPerformance = NULL, OutputDirectory = NULL,
-  OutputFileName = NULL, GraphicTitle = NULL, RowHeader = NULL,
-  ColumnHeader = NULL, IconList = NULL, SummaryRowOption = "Off",
-  ImageWidth = 500, ImageHeight = 800, Resolution = 1,
-  GraphicCellHeight = NULL, GraphicCellWidths = NULL, BarWidth = 1,
-  BarColors = NULL, BarFigureMargins = c(0, 0, 0, 0))
+MakeDecisionTable(Data, BestPerformanceVector, SummaryBestPerformance = NULL,
+  OutputDirectory = getwd(), OutputFileName = "DecisionTable",
+  GraphicTitle = "Title", RowHeader = "RowHeader",
+  ColumnHeader = "ColumnHeader", IconList = NULL, IconColor = "black",
+  SummaryRowOption = "Off", ImageWidth = 500, ImageHeight = 800,
+  Resolution = 1, GraphicCellHeight = NULL, GraphicCellWidths = NULL,
+  BarWidth = 1, BarColors = NULL, IncludeCI = "FALSE",
+  Data_UpperCI = NULL, Data_LowerCI = NULL)
 }
 \arguments{
 \item{Data}{A matrix with row and column names (must me matrix even if only 1 row or column), no default}
@@ -19,29 +20,42 @@ MakeDecisionTable(Data = NULL, BestPerformanceVector = NULL,
 "High" means highest value in row will be colored to represent best performance
 "Low" means lowest value in row will be colored to represent best performance}
 
-\item{SummaryBestPerformance}{A string containing "High" or "Low" to indicate best performance for summary row, no default
+\item{SummaryBestPerformance}{A string containing "High" or "Low" to indicate best performance for summary row, no default.
 Only required if "MeanValue", "SumValue", or "MedianValue" options chosen. For other options higher summarized rank correspond with better performance}
 
-\item{OutputDirectory}{A string containing the full path name of folder where resulting graphic should be stored, no default}
+\item{OutputDirectory}{A string containing the full path name of folder where resulting graphic should be stored, default = current working directory}
 
-\item{OutputFileName}{A string containing the file name for the resulting graphic, no default}
+\item{OutputFileName}{A string containing the file name for the resulting graphic, default = "DecisionTable"}
 
-\item{GraphicTitle}{A string containing the title for the decision table graphic, no default}
+\item{GraphicTitle}{A string containing the title for the decision table graphic, default = "Title"}
 
-\item{RowHeader}{A string containing the descriptive title for row names, no default}
+\item{RowHeader}{A string containing the descriptive title for row names, default = "RowHeader"}
 
-\item{ColumnHeader}{A string containing the descriptive title for column names, no default}
+\item{ColumnHeader}{A string containing the descriptive title for column names, default = "ColumnHeader"}
 
-\item{IconList}{A vector of icon names to be printed right of the GraphicTitle, length may not exceed 3, default = no icons}
+\item{IconList}{A vector of icon names to be printed right of the GraphicTitle, length may not exceed 3, default = no icons.
+A custom black-and-white icon may be printed by providing the filename with .png extension, or an icon supported by the package may be chosen by providing one of the following icon names:
+"Commercial_Fisheries_Herring_Mackerel_Lobster",  "Environmental_Considerations",  "Groundfish_Fishery",  "Groundfish_Species",  "Herring_Fishery_Option1",  "Herring_Fishery_Option2",
+"Lobster",  "Lobster_Fishery",  "Predator_Fisheries_Tuna_Haddock_Flatfish",  "Predator_Species_Tuna_Haddock_Flatfish",  "Primary_Production",  "Protected_Species",  "Protected_Species_and_Tourism",
+"Tourism",  "Tuna",  "Tuna_Fishery"}
 
-\item{SummaryRowOption}{A string indicating summary row option, default = no summary row
-"Off"          No summary row
-"MeanRank"     Summary row added, values represent mean rank across all rows in each column, highest rank correspond with best performance
-"SumRank"      Summary row added, values represent summed rank across all rows in each column, highest rank correspond with best performance
-"MedianRank"   Summary row added, values represent median rank across all rows in each column, highest rank correspond with best performance 
-"MeanValue"    Summary row added, values represent mean value of Data across all rows in each column, high/low value corresponding with best performance must be specified
-"SumValue"     Summary row added, values represent sum of Data values across all rows in each column, high/low value corresponding with best performance must be specified
-"MedianValue"  Summary row added, values represent median value of Data across all rows in each column, high/low value corresponding with best performance must be specified}
+\item{IconColor}{A string specifying the color of icons to be printed, only necessary if IconList provide. default = "black"}
+
+\item{SummaryRowOption}{A string indicating summary row option, default = "Off" (no summary row)
+
+     "Off"          = No summary row
+     
+     "MeanRank"     = Summary row added, values represent mean rank across all rows in each column, highest rank correspond with best performance
+     
+     "SumRank"      = Summary row added, values represent summed rank across all rows in each column, highest rank correspond with best performance
+     
+     "MedianRank"   = Summary row added, values represent median rank across all rows in each column, highest rank correspond with best performance 
+     
+     "MeanValue"    = Summary row added, values represent mean value of Data across all rows in each column, high/low value corresponding with best performance must be specified
+     
+     "SumValue"     = Summary row added, values represent sum of Data values across all rows in each column, high/low value corresponding with best performance must be specified
+     
+     "MedianValue"  = Summary row added, values represent median value of Data across all rows in each column, high/low value corresponding with best performance must be specified}
 
 \item{ImageWidth}{A number specifying total graphic image width in number of pixels, default = 500}
 
@@ -57,18 +71,37 @@ Increasing the resolution (higher numbers) will result in a larger image which c
 
 \item{BarWidth}{A number specifying the width of the plotted bar}
 
-\item{BarColors}{A string specifying single color or a vector of colors equal in length to the number of columns in Data. Colors used to visually show rank, defaults specified by dimensions of Data.}
+\item{BarColors}{A string specifying single color or a vector of colors equal in length to the number of columns in Data. Default uses colors specified by data dimenstions to visually show ranked performance.}
 
-\item{BarFigureMargins}{A vector of length 4 specifying margins of barplots in each graphic cell, default = c(0,0,0,0).
-If figure margin error generated when producing decision table, try setting this parameter to the default option, reproducing the graphic, and then specifying parameter as desired}
+\item{IncludeCI}{A string specifying the inclusion of confidence levels in plot, if = "TRUE" then Data_UpperCI and Data_LowerCI must also be provided. default = "FALSE"}
+
+\item{Data_UpperCI}{A matrix containing upper confidence levels with row and column names that match Data (must me matrix even if only 1 row or column), no default.}
+
+\item{Data_LowerCI}{A matrix containing lower confidence levels with row and column names that match Data (must me matrix even if only 1 row or column), no default.}
 }
 \value{
-Customized decision table image (.png)
+Customized decision table image (.png) with optional confidence intervals on bars.
 }
 \description{
 This function produces a decision table with between 1 and 20 rows 
 and columns based on the dimensions of the provided data matrix.
 Decision table labels, colors, performance ranking, and decision 
-table dimensions can be specified. Up to three icons may be printed 
-next to the title, and a summary row can also be automatically calculated.
+table dimensions can be specified. Confidence intervals may be specified using 
+the upper bounds provided in Data_UpperCI and lower bounds provided in
+Data_LowerCI matrices (confidence intervals are not automatically generated).
+Up to three icons may be printed next to the title, and a summary row can 
+also be automatically calculated.
+}
+\examples{
+Produce example decision table and save as DecisionTable.png in current working directory.
+MakeDecisionTable(Data = TestMatrix_Ncol_4_Nrow_3, BestPerformanceVector = c("High","High","High","High"))
+MakeDecisionTable(Data = TestMatrix_Ncol_4_Nrow_3, BestPerformanceVector = c("High","High","High","High"),
+                  IconList = c("Tuna", "Groundfish_Fishery", "Environmental_Considerations"))
+MakeDecisionTable(Data = TestMatrix_Ncol_4_Nrow_3, BestPerformanceVector = c("High","High","High","High"),
+                  IconList = c("Protected_Species", "Commercial_Fisheries_Herring_Mackerel_Lobster", "Predator_Species_Tuna_Haddock_Flatfish"), 
+                  IconColor = "blue")
+MakeDecisionTable(Data = TestMatrix_Ncol_4_Nrow_3, BestPerformanceVector = c("High","High","High","High"), 
+                  SummaryBestPerformance = c("High","High","High","High"),
+                  SummaryRowOption = "SumRank")
+
 }

@@ -1,16 +1,16 @@
-#' @title Select format for decision tables with 18 column.
-#' 
-#' @description 
-#' This function selects the format for decision tables with 18 column and between 1 and 20 rows.
-#' @param Data A matrix with row and column names, no default
-#' @return GraphicFormat$GraphicNRow        Number of rows in graphic layout
-#'              $GraphicNCol        Number of columns in graphic layout
-#'              $GraphicLaoyout     Structure of graphic layout
-#'              $GraphicBarColors   List of default colors for graphic bars# Format for Decision tables with 2 columns
-#' @param SummaryRowOption A string indicating summary row option, default = no summary row
-#'      "Off"          No summary row
-#'      "MeanRank"     Summary row added, values represent mean rank across all rows in each column 
-#'      "SumRank"      Summary row added, values represent summed rank across all rows in each column
+# @title Select format for decision tables with 18 column.
+# 
+# @description 
+# This function selects the format for decision tables with 18 column and between 1 and 20 rows.
+# @param Data A matrix with row and column names, no default
+# @return GraphicFormat$GraphicNRow        Number of rows in graphic layout
+#              $GraphicNCol        Number of columns in graphic layout
+#              $GraphicLayout     Structure of graphic layout
+#              $GraphicBarColors   List of default colors for graphic bars# Format for Decision tables with 2 columns
+# @param SummaryRowOption A string indicating summary row option, default = no summary row
+#      "Off"          No summary row
+#      "MeanRank"     Summary row added, values represent mean rank across all rows in each column 
+#      "SumRank"      Summary row added, values represent summed rank across all rows in each column
 
 
 GraphicFormat18Col <- function(Data, SummaryRowOption = "Off"){

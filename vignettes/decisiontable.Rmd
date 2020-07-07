@@ -1,0 +1,395 @@
+---
+title: "Introduction to decisiontable"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{decisiontable}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+description: >
+  Start here for an introduction to the decisiontable package, including descriptions of options for data inputs, coloring options, layout choices, and optional icons and summary information.
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(decisiontable)
+```
+
+
+Decision tables serve a critical role in making comparisons, assessing trade-offs, and communicating consequences to decision makers. The decisiontable package combines more traditional text-based tables and graphical elements to provide a flexible visualization of data that can be tailored to the needs of different decision-making audiences. 
+
+The following introduction highlights flexible features of this package that alow alternate data input formats, labels, coloring options, layout choices, icons and summary information.
+
+## Data & Labels
+
+decisiontable can visualize two data formats: a dataframe ...
+```{r}
+# Example dataframe
+set.seed(1)
+data_df <- matrix(c(abs(rnorm(30,20,sd=5))), ncol = 5, nrow = 6)
+colnames(data_df) <- c("Column 1", "Column 2", "Column 3", "Column 4", "Column 5")
+rownames(data_df) <- c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6")
+data_df
+```
+
+... or a vector.
+```{r}
+# Example vector
+set.seed(1)
+data_v <- c(rnorm(30,20,sd=5))
+
+data_v
+```
+
+If a dataframe is provided it may be a matrix, data_table, or tibble. Data in this format will be displayed in the same configuration in the final decision table. Row and column labels will be pulled from the dataframe or can be specified using the `rownames` and `colnames` arguments.
+```{r}
+# Decision table created using the dataframe option 
+makeDecisionTable(data = data_df,
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = "dataframe_DecisionTable",
+                  GraphicTitle = "Decision table made with a dataframe input",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 800)
+```
+
+knitr::include_graphics("vignettes/figures/dataframe_DecisionTable.png")
+![Decision table created using the dataframe option](here::here("vignettes/figures/dataframe_DecisionTable.png"))
+
+If a vector is provided, additional `ncol`, `nrow`, `byrow`, `colnames` and `rownames` arguments must be provided to configure the data in the final decision table. 
+```{r}
+# Decision table created using the vector data option
+makeDecisionTable(data = data_v,
+                  ncol = 5, # Add for vector option
+                  nrow = 6, # Add for vector option
+                  byrow = FALSE, # Add for vector option
+                  colnames = c("Column 1", "Column 2", "Column 3", "Column 4", "Column 5"), # Add for vector option
+                  rownames = c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6"), # Add for vector option
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = "vector_DecisionTable",
+                  GraphicTitle = "Decision table made with a vector input",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 800)
+```
+
+![Decision table created using the vector data option](here::here("vignettes/figures/vector_DecisionTable.png"))
+
+For simplicity, the data_df example dataset in the dataframe format will be used throughout the remainder of this vignette.
+
+In the event that values printed in the decision table are summary statistics, upper and lower confidence bounds can be added to bars using the `Data_UpperCI` and `Data_LowerCI` arguments. These inputs may be in either the dataframe or the vector format which also requires additional `ncol`, `nrow`, `byrow` arguments. 
+```{r}
+# Create example confidence bounds
+LowerCI <- data_df - 0.5*data_df
+UpperCI <- data_df + 0.5*data_df
+
+# Add confidence bounds to a decision table created using the dataframe option 
+makeDecisionTable(data = data_df,
+                  IncludeCI = "TRUE", # Add to include confidence bounds
+                  Data_LowerCI = LowerCI, # Add to include confidence bounds
+                  Data_UpperCI = UpperCI, # Add to include confidence bounds
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = "CI_DecisionTable",
+                  GraphicTitle = "Decision table with CI",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 800)
+```
+
+![Decision table with confidence bounds](here::here("vignettes/figures/CI_DecisionTable.png"))
+
+## Coloring Options
+By default a single-color option colors all bars in the decision table grey, but the following customized coloring options are also available:
+1. Change the single-color option from grey to another color to be used for all bars in the decision table
+2. Use the pre-specified ranked-coloring option to visually rank bar plots from worst- to best-performing option in each row using a pre-specified color scheme
+3. Change the ranked-coloring option from the pre-specified color scheme to a custom color scheme to use for visual ranking across each row
+
+### 1) Change single-color option
+```{r}
+# Decision table with a custom single-color scheme
+makeDecisionTable(data = data_df,
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = "Custom_Single-Color_Option",
+                  GraphicTitle = "Custom Single-Color Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 800,
+                  barColors = "cadetblue3")
+```
+
+![Decision table with a custom single-color scheme](here::here("vignettes/figures/Custom_Single-Color_Option.png"))
+
+### 2) Use pre-specified ranked-coloring option
+For tables containing up to 20 rows and 20 columns there is a pre-specified ranked-coloring option that visually reflects the relative ranked formance. To utilize this option, `visualRank` must be set to "TRUE", the `barColors` argument must be set to "defaultRankColor", and users must provide a `BestPeformanceVector`  that indicates weather a "High" value corresponds with best performance or if a "Low" data value corresponds with best performance. 
+```{r}
+# Decision table with a pre-specified ranked-coloring scheme
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("Pre-Specified_Ranked_Color_Option"),
+                  GraphicTitle = "Pre-Specified Ranked Color Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 800)
+```
+
+![Decision table with a pre-specified ranked-coloring scheme](here::here("vignettes/figures/Pre-Specified_Ranked_Color_Option.png"))
+
+### 3) Change ranked-coloring option
+The ranked coloring can be changed to a custom scheme by setting the `barColors` argument as a vector of colors equal in length to the number of columns in your input data. The first color in the vector will correspond with the worst performance in each row and the last color provided will correspond with the best performance. 
+```{r}
+# Decision table with a pre-specified ranked-coloring scheme
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = c("red","darkorange", "yellow", "yellowgreen", "green4"),
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("Custom_Ranked_Color_Option"),
+                  GraphicTitle = "Custom Ranked Color Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 800)
+```
+
+![Decision table with custom ranked coloring scheme](here::here("vignettes/figures/Custom_Ranked_Color_Option"))
+
+## Layout 
+The following arguments can be used to alter the dimensions and layout of the resulting figure to meet specific needs:
+- `figureWidth` Specifies the width of the final figure in pixels, default = 500. 
+- `figureHeight` Specifies the height of the final figure in pixels, default = 800. If horizontal division lines do not appear, try increasing the figure height using this argument.
+- `resolution`  Increases the image resolution by scaling the number of pixels in the length and width by an equal amount specified using this argument. Increasing the resolution (higher numbers) will result in a larger image which can be adjusted in any image processing software to the desired dimension, default = 1 (no scaling up).
+- `graphicCellWidths` Is a vector of length 2 specifying first the width of the row label column and second the data column width
+- `graphicCellHeight` Is a number specifying the height of data rows 
+
+```{r}
+# Higher resolution decision table with custom row and column dimensions and figure dimensions.
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("Layout_Options"),
+                  GraphicTitle = "Custom Layout Options",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 750, # Add for custom figure dimensions
+                  figureHeight = 900, # Add for custom figure dimensions
+                  resolution = 2, # Add for custom figure resolution
+                  graphicCellWidths = c(5,1), # Add for custom column widths
+                  graphicCellHeight = 0.5) # Add for custom row heights
+```
+![Decision table with custom layout](here::here("vignettes/figures/Layout_Options"))
+
+## Icons
+Up to 3 icons can be printed to the right of the decision table title using the `IconList` argument. These icons (identified by string names in a vector) can be selected from the following list that accompanies the package or the filename of the desired icon with a .png extension can be provided. Icon coloring for package icons can be changed using the `IconColor` argument. Alternatively, the file path to a custom icon can be provided to the `IconList` argument.
+
+
+Package icons
+- "Commercial_Fisheries_Herring_Mackerel_Lobster"
+![](here::here("vignettes/figures/Commercial_Fisheries_Herring_Mackerel_Lobster.png"))
+- "Environmental_Considerations" ![](here::here("vignettes/figures/Environmental_Considerations.png"))
+- "Groundfish_Fishery" ![](here::here("vignettes/figures/Groundfish_Fishery.png"))
+- "Groundfish_Species" ![](here::here("vignettes/figures/Groundfish_Species.png"))
+- "Herring_Fishery_Option1" ![](here::here("vignettes/figures/Herring_Fishery_Option1.png"))
+- "Herring_Fishery_Option2" ![](here::here("vignettes/figures/Herring_Fishery_Option2.png"))
+- "Lobster" ![](here::here("vignettes/figures/Lobster.png"))
+- "Lobster_Fishery" ![](here::here("vignettes/figures/Lobster_Fishery.png"))
+- "Predator_Fisheries_Tuna_Haddock_Flatfish" ![](here::here("vignettes/figures/Predator_Fisheries_Tuna_Haddock_Flatfish.png"))
+- "Predator_Species_Tuna_Haddock_Flatfish" ![](here::here("vignettes/figures/Predator_Species_Tuna_Haddock_Flatfish.png"))
+- "Primary_Production" ![](here::here("vignettes/figures/Primary_Production.png"))
+- "Protected_Species" ![](here::here("vignettes/figures/Protected_Species.png"))
+- "Protected_Species_and_Tourism" ![](here::here("vignettes/figures/Protected_Species_Tourism.png"))
+- "Tourism" ![](here::here("vignettes/figures/Tourism.png"))
+- "Tuna" ![](here::here("vignettes/figures/Tuna.png"))
+- "Tuna_Fishery" ![](here::here("vignettes/figures/Tuna_Fishery.png"))
+
+```{r}
+# Decision table with 3 icons
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("Icon_Decision_Table"),
+                  GraphicTitle = "Decision Table with Icons",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 800,
+                  IconList = c("/Users/ahart2/Downloads/Fish3.png", "Commercial_Fisheries_Herring_Mackerel_Lobster", "Environmental_Considerations"),
+                  IconColor = "blue")
+```
+
+![Decision table with 3 icons printed to the right of the figure title](here::here("vignettes/figures/Icon_Decision_Table"))
+
+## Summary Information
+A number of statistics can be automatically calculated to summarize data in each column of the decision table and included as an additional summary row. These options include:
+1. "Off" By default no summary row is included
+2. "MeanRank"
+3. "SumRank"    
+4. "MedianRank" 
+5. "MeanValue"
+6. "SumValue" 
+7. "MedianValue"
+8. "WhiskerPlot"  = Summary row added, box and whisker plot summarizes data contained in each column, high/low value corresponding with best performance must be specified
+
+Note: Options 2-4 should only be used when `visualRank` = "TRUE"
+
+### 2) "MeanRank" Option
+This option calculates the mean rank across all rows in each column. The highest rank always corresponds with the best performance, however high ranks could be associated with either high or low values based on the `BestPerformanceVector`. 
+```{r}
+# Decision table with a summary row showing mean rank in each column
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("MeanRank_Summary_Row"),
+                  GraphicTitle = "Mean Rank Summary Row Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 900, # Increase the figure height if horizontal divisions do not appear
+                  SummaryRowOption = "MeanRank") # Include this argument to add a summary row
+```
+
+![Decision table with a summary row showing mean rank in each column](here::here("vignettes/figures/MeanRank_Summary_Row"))
+
+### 3) "SumRank" Option
+This option calculates the sum of ranks in each column. The highest summed rank always corresponds with the best performance, however high ranks could be associated with either high or low values based on the `BestPerformanceVector`.
+```{r}
+# Decision table with a summary row showing sum rank in each column
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("SumRank_Summary_Row"),
+                  GraphicTitle = "Sum Rank Summary Row Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 900, 
+                  SummaryRowOption = "SumRank") # Include this argument to add a summary row
+```
+
+![Decision table with a summary row showing sum rank in each column](here::here("vignettes/figures/SumRank_Summary_Row"))
+
+### 4) "MedianRank" Option
+This option calculates the median rank across all rows in each column. The highest median rank always corresponds with the best performance, however high ranks could be associated with either high or low values based on the `BestPerformanceVector`.
+```{r}
+# Decision table with a summary row showing median rank in each column
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("MedianRank_Summary_Row"),
+                  GraphicTitle = "Median Rank Summary Row Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 900, 
+                  SummaryRowOption = "MedianRank") # Include this argument to add a summary row
+```
+
+![Decision table with a summary row showing median rank in each column](here::here("vignettes/figures/MedianRank_Summary_Row"))
+
+### 5) "MeanValue" Option
+This option calculates the mean value of data across all rows in each column. An additional `SummaryBestPerformance` argument must also be provided to specify whether "High" or "Low" values should be considered the best performance. 
+```{r}
+# Decision table with a summary row showing the mean value in each column
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("MeanValue_Summary_Row"),
+                  GraphicTitle = "Mean Value Summary Row Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 900, 
+                  SummaryRowOption = "MeanValue", # Include this argument to add a summary row
+                  SummaryBestPerformance = "High") # Include this argument to add a summary row
+```
+
+![Decision table with a summary row showing the mean value in each column](here::here("vignettes/figures/MeanValue_Summary_Row"))
+
+### 6) "SumValue" Option
+This option calculates the summed value of data across all rows in each column. An additional `SummaryBestPerformance` argument must also be provided to specify whether "High" or "Low" values should be considered the best performance. 
+```{r}
+# Decision table with a summary row showing the mean value in each column
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("SumValue_Summary_Row"),
+                  GraphicTitle = "Sum Value Summary Row Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 900, 
+                  SummaryRowOption = "SumValue", # Include this argument to add a summary row
+                  SummaryBestPerformance = "High") # Include this argument to add a summary row
+```
+
+![Decision table with a summary row showing the sum value in each column](here::here("vignettes/figures/SumValue_Summary_Row"))
+
+### 7) "MedianValue" Option
+This option calculates the median data value in each column. An additional `SummaryBestPerformance` argument must also be provided to specify whether "High" or "Low" values should be considered the best performance. 
+```{r}
+# Decision table with a summary row showing the mean value in each column
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("MedianValue_Summary_Row"),
+                  GraphicTitle = "Median Value Summary Row Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 900, 
+                  SummaryRowOption = "MedianValue", # Include this argument to add a summary row
+                  SummaryBestPerformance = "High") # Include this argument to add a summary row
+```
+
+![Decision table with a summary row showing the median value in each column](here::here("vignettes/figures/MedianValue_Summary_Row"))
+
+### 8) "WhiskerPlot" Option
+This option calculates the median data value in each column. An additional `SummaryBestPerformance` argument must also be provided to specify whether "High" or "Low" values should be considered the best performance. The median value is printed below each whisker plot in the summary row
+```{r}
+# Decision table with a summary row showing the mean value in each column
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("WhiskerPlot_Summary_Row"),
+                  GraphicTitle = "Whisker Plot Summary Row Option",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 900, 
+                  SummaryRowOption = "WhiskerPlot", # Include this argument to add a summary row
+                  SummaryBestPerformance = "High") # Include this argument to add a summary row
+```
+
+![Decision table with a summary row showing the median value in each column](here::here("vignettes/figures/WhiskerPlot_Summary_Row"))
+
+

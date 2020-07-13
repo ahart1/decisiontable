@@ -16,8 +16,15 @@ Depends: R (>= 3.4.0),
      png,
      raster,
      rasterVis,
-     rgdal
+     rgdal,
+     tidyverse,
+     cowplot,
+     magick
 License: BSD 2 Clause
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

@@ -25,6 +25,9 @@ Decision tables serve a critical role in making comparisons, assessing trade-off
 
 The following introduction highlights flexible features of this package that alow alternate data input formats, labels, coloring options, layout choices, icons and summary information.
 
+## Output
+The `makeDecisionTable` function produces a decision table that expands the cells of a traditional text-based table to also include bar charts with heights corresponding to the text value, and customizable labels, coloring options, layout, icons, and summary information. By default, each decision table is saved as a .png image to the user's working directory under the name provided to the `OutputFileName` argument or another directory may be specified using the `OutputDirectory` argument. 
+
 ## Data & Labels
 
 decisiontable can visualize two data formats: a dataframe ...
@@ -46,7 +49,7 @@ data_v <- c(rnorm(30,20,sd=5))
 data_v
 ```
 
-If a dataframe is provided it may be a matrix, data_table, or tibble. Data in this format will be displayed in the same configuration in the final decision table. Row and column labels will be pulled from the dataframe or can be specified using the `rownames` and `colnames` arguments.
+If a dataframe is provided it may be a matrix, data_table, or tibble. Data in this format will be displayed in the same configuration in the final decision table. Row and column labels will be pulled from the dataframe or can be specified using the `rownames` and `colnames` arguments. The `GraphicTitle` argument must be used to specify the table title.
 ```{r}
 # Decision table created using the dataframe option 
 makeDecisionTable(data = data_df,
@@ -148,7 +151,7 @@ makeDecisionTable(data = data_df,
 ![Decision table with a pre-specified ranked-coloring scheme](here::here("vignettes/figures/Pre-Specified_Ranked_Color_Option.png"))
 
 ### 3) Change ranked-coloring option
-The ranked coloring can be changed to a custom scheme by setting the `barColors` argument as a vector of colors equal in length to the number of columns in your input data. The first color in the vector will correspond with the worst performance in each row and the last color provided will correspond with the best performance. 
+The ranked coloring can be changed to a custom scheme by setting the `barColors` argument as a vector of color names equal in length to the number of columns in your input data. The first color in the vector will correspond with the worst performance in each row and the last color provided will correspond with the best performance. 
 ```{r}
 # Decision table with a pre-specified ranked-coloring scheme
 makeDecisionTable(data = data_df,
@@ -173,6 +176,7 @@ The following arguments can be used to alter the dimensions and layout of the re
 - `resolution`  Increases the image resolution by scaling the number of pixels in the length and width by an equal amount specified using this argument. Increasing the resolution (higher numbers) will result in a larger image which can be adjusted in any image processing software to the desired dimension, default = 1 (no scaling up).
 - `graphicCellWidths` Is a vector of length 2 specifying first the width of the row label column and second the data column width
 - `graphicCellHeight` Is a number specifying the height of data rows 
+- `yscalerow` Is a string specifying the type of scaling for the y-axis of bar charts, default = "FALSE"
 
 ```{r}
 # Higher resolution decision table with custom row and column dimensions and figure dimensions.
@@ -192,6 +196,25 @@ makeDecisionTable(data = data_df,
                   graphicCellHeight = 0.5) # Add for custom row heights
 ```
 ![Decision table with custom layout](here::here("vignettes/figures/Layout_Options"))
+
+`yscalerow` is a powerful argument for structuring comparisons across rows or across the entire decision table using a common y-axis scale for bar charts. When the default settings are used yscalerow = "FALSE" which results in a single y-axis scale for all bar charts in the decision table except the summary row. This means that all bar charts in the table can be compared by height to interpret differences in value. In contrast, if yscalerow = "TRUE" the y-axis is scaled independently for each row in the decision table. This allows the visual comparison of all bar charts in the same row, but bar charts in different rows will be plotted along y-axes of different magnitudes so more care must be taken when comparing between rows. This second option is particularly useful when rows contain different types of information (e.g. one row represents data in meters and another row represents data in centimeters) which could result in data of different magnitudes. 
+
+```{r}
+# Decision table with bar chart y-axes scaled independtly by row
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputDirectory = here::here("vignettes/figures"),
+                  OutputFileName = paste("Layout_Options_yscalerow"),
+                  GraphicTitle = "Pick a unique y-axis scale for each row",
+                  RowHeader = "Example Row Header",
+                  ColumnHeader = "Example Column Header",
+                  figureWidth = 650,
+                  figureHeight = 800,
+                  yscalerow = "TRUE") # Add to set an independent y-axis scale for each row in the decision table
+```
+
 
 ## Icons
 Up to 3 icons can be printed to the right of the decision table title using the `IconList` argument. These icons (identified by string names in a vector) can be selected from the following list that accompanies the package or the filename of the desired icon with a .png extension can be provided. Icon coloring for package icons can be changed using the `IconColor` argument. Alternatively, the file path to a custom icon can be provided to the `IconList` argument.
@@ -376,7 +399,7 @@ This option calculates the median data value in each column. An additional `Summ
 ```{r}
 # Decision table with a summary row showing the mean value in each column
 makeDecisionTable(data = data_df,
-                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  BestPerformanceVector = rep("Low", nrow(data_df)), # Change so low values represent best performance
                   barColors = "defaultRankColor",
                   visualRank = "TRUE",
                   OutputDirectory = here::here("vignettes/figures"),
@@ -387,7 +410,8 @@ makeDecisionTable(data = data_df,
                   figureWidth = 650,
                   figureHeight = 900, 
                   SummaryRowOption = "WhiskerPlot", # Include this argument to add a summary row
-                  SummaryBestPerformance = "High") # Include this argument to add a summary row
+                  SummaryBestPerformance = "Low", # Include this argument to add a summary row
+                  IconList = c("Groundfish_Fishery", "Lobster", "Tuna")) 
 ```
 
 ![Decision table with a summary row showing the median value in each column](here::here("vignettes/figures/WhiskerPlot_Summary_Row"))

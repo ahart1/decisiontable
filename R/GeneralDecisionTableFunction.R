@@ -4,16 +4,18 @@
 #' @title Produce generalized decision tables with provided confidence intervals (optional) on bars.
 #'
 #' @description
-#' This function produces a decision table with between 1 and 20 rows
-#' and columns based on the dimensions of the provided data matrix.
-#' Decision table labels, colors, performance ranking, and decision
-#' table dimensions can be specified. Confidence intervals may be specified using
+#' This function produces a decision table with dimensions based on those
+#' of the provided data matrix or the specified dimensions if data is provided as vector.
+#' Labels, figure layout and dimensions, and coloring scheme,
+#' can be customized. Confidence intervals may be specified using
 #' the upper bounds provided in Data_UpperCI and lower bounds provided in
-#' Data_LowerCI matrices (confidence intervals are not automatically generated).
-#' Up to three icons may be printed next to the title, and a summary row can
-#' also be automatically calculated.
+#' Data_LowerCI data inputs (confidence intervals are not automatically generated).
+#' Up to three icons may be printed next to the title, and a summary information can
+#' also be automatically calculated and appended as the last row of the decision table.
 #'
-#' @param data A data matrix with dimensions matching the desired decision table or a vector equal in length to the number of cells in the desired decision table. By default vectors will fill the table by column according to the dimensions specified by `nrow` and `ncol` arguments.
+#' @param data A data matrix with dimensions matching the desired decision table or a vector equal in length to the number of cells in the desired decision table. By default vectors will fill the table by column according to the dimensions specified by `nrow` and `ncol` arguments, no default.
+#' @param rownames A vector of strings equal in length to the number of rows to be used as row names for the decision table when data is provided as a vector, no default.
+#' @param colnames A vector of strings equal in length to the number of columns to be used as column names for the decision table when data is provided as a vector, no default.
 #' @param OutputDirectory A string containing the full path name of folder where resulting graphic should be stored, default = current working directory
 #' @param OutputFileName A string containing the file name for the resulting graphic, default = "DecisionTable"
 #' @param GraphicTitle A string containing the title for the decision table graphic, default = "Title"
@@ -27,6 +29,7 @@
 #' @param graphicCellWidths A vector of length 2 specifying first the width of row label column second data column width
 #' @param graphicCellHeight A number specifying height of graphic rows containing data
 #' @param barWidth A number specifying the width of the plotted bar
+#' @param yscalerow A string specifying the type of scaling for the y-axis of bar charts, if = "TRUE" the y-axis scale is chosen independently for each row, else the scale is chosen for the entire decision table, default = "FALSE"
 #' @param SummaryRowOption A string indicating summary row option, default = "Off" (no summary row)
 #'
 #'      "Off"          = No summary row
@@ -46,8 +49,8 @@
 #'      "WhiskerPlot"  = Summary row added, box and whisker plot summarizes data contained in each column, high/low value corresponding with best performance must be specified
 #' @param visualRank A string specifying the use of color to visually show ranked relative performance, if = "TRUE" then `BestPerformanceVector` and `SummaryBestPerformance` (if summary row included) must be provided and the `barColors` argument should be set to "defaultRankColor" or provided a vector of unique colors equal in lenght to the number of columns. Default = "FALSE"
 #' @param BestPerformanceVector A vector equal in length to the number of rows in Data containing "High" or "Low". Default = NULL.
-#'      "High" means highest value in row will be colored to represent best performance
-#'      "Low" means lowest value in row will be colored to represent best performance
+#'      "High" = highest value in row will be colored to represent best performance
+#'      "Low" = lowest value in row will be colored to represent best performance
 #' @param SummaryBestPerformance A string containing "High" or "Low" to indicate best performance for summary row, no default.
 #'      Only required if "MeanValue", "SumValue", "MedianValue", or "WhiskerPlot" options chosen. For other options higher summarized rank correspond with better performance
 #' @param barColors A string specifying single color OR a vector of colors equal in length to the number of data columns, OR "defaultRankColor" which uses default colors to denote ranked performance. Default = grey columns.
@@ -60,11 +63,6 @@
 #'        "Lobster",  "Lobster_Fishery",  "Predator_Fisheries_Tuna_Haddock_Flatfish",  "Predator_Species_Tuna_Haddock_Flatfish",  "Primary_Production",  "Protected_Species",  "Protected_Species_and_Tourism",
 #'        "Tourism",  "Tuna",  "Tuna_Fishery"
 #' @param IconColor A string specifying the color of icons to be printed, only necessary if IconList provide. default = "black"
-#'
-## OPTIONAL arguments if data vector provided
-#' @param ncol number of columns for the decision table, required only if a data vector is provided.
-#' @param nrow number of rows for the decision table, required only if a data vector is provided.
-#'
 #'
 #' @return Customized decision table image (.png) with optional confidence intervals on bars.
 #' @export
@@ -86,48 +84,37 @@
 
 
 
-############### Define General Decision Table Function ###############
+############### Define makeDecisionTable Function ###############
 
 makeDecisionTable <- function(data,
                               rownames = NULL,
                               colnames = NULL,
-                              BestPerformanceVector = NULL,
-                              SummaryBestPerformance = NULL,
                               OutputDirectory = getwd(),
                               OutputFileName = "DecisionTable",
                               GraphicTitle = "Title",
-                              RowHeader = "RowHeader",
-                              ColumnHeader = "ColumnHeader",
-                              IconList = NULL,
-                              IconColor = "black",
-                              SummaryRowOption = "Off",
+                              RowHeader = "Row_Header",
+                              ColumnHeader = "Column_Header",
                               figureWidth = 500,
                               figureHeight = 800,
                               resolution = 1,
                               graphicCellWidths = NULL,
                               graphicCellHeight = NULL,
                               barWidth = 1,
+                              yscalerow = "FALSE",
+                              SummaryRowOption = "Off",
+                              visualRank = "FALSE",
+                              BestPerformanceVector = NULL,
+                              SummaryBestPerformance = NULL,
                               barColors = NULL,
                               IncludeCI = "FALSE",
                               Data_UpperCI = NULL,
                               Data_LowerCI = NULL,
-                              visualRank = "FALSE",
+                              IconList = NULL,
+                              IconColor = "black",
                               ...){
-
-  # Library dependent packages
-  # library(ggplot2)
-  # library(ggplotify)
-  # library(grid)
-  # library(gridExtra)
-  # library(png)
-  # library(raster)
-  # library(rasterVis)
-  # library(rgdal)
-  # library(tidyverse)
 
   # Process input data if a vector is provided
   if(is.matrix(data)==FALSE & is.data.frame(data)==FALSE & is_tibble(data)==FALSE){
-    # data <- matrix(data, ncol=ncol, nrow=nrow)
     data <- matrix(data, ...)
     # row & column names
     rownames(data) <- rownames
@@ -143,7 +130,7 @@ makeDecisionTable <- function(data,
   # Create png: filename, width, height, resolution can all be adjusted
   png(filename = paste(OutputDirectory, paste(OutputFileName, ".png", sep=""), sep="/"), width = figureWidth*resolution, height = figureHeight*resolution)
 
-  # Pick correct graphic format details (number of rows/columns, layout matrix) for given data set
+  # Set up correct graphic format (number of rows/columns, layout matrix) for given data set
   graphicFormat <- NULL # Start with empty format object
   if(ncol(data) == 1){
 
@@ -233,8 +220,6 @@ makeDecisionTable <- function(data,
   # Produce final GraphicFormat
   GraphicFormat <- matrix(graphicFormat$graphicLayout, nrow = graphicFormat$graphicNrow, ncol = graphicFormat$graphicNcol, byrow = TRUE)
   GridList <- NULL
-  #layout.show(GraphicFormat)
-  #lcm(10)
 
   # Set bar colors
   if(is.null(barColors)==TRUE){
@@ -335,19 +320,16 @@ makeDecisionTable <- function(data,
                   rect = element_blank(),
                   line = element_blank())
 
-
           GridList <- gList(GridList, as.grob(assign(paste("Icon_", icon, sep=""), PlotIcon)))
 
         } else { # Use custom icon
-          IconGrob <- as.grob(ggdraw() +
-              draw_image(IconList[icon]))
+          IconGrob <- as.grob(ggdraw() + draw_image(IconList[icon]))
           # Plot icon
           print("Custom Icon")
           GridList <- gList(GridList,IconGrob)
-          # IconImage <- raster(IconList[icon], layer=1, values=True)
         }
     }
-  } else if(is.null(IconList)==TRUE){ # If there are no icons
+  } else if(is.null(IconList)==TRUE){ # If there are no icons provided to argument
     for(empty in 1:3){ # Fill all columns except title in first row with empty plot (Title, empty the rest of row)
       EmptySpace <- textGrob(" ")
       GridList <- gList(GridList, EmptySpace)
@@ -359,7 +341,7 @@ makeDecisionTable <- function(data,
       GridList <- gList(GridList, EmptySpace)
       print("Empty Plot Icon" )
     }
-    warning("A maximum of 3 icons can be printed to the right of the title")
+    warning("A maximum of 3 icons can be printed to the right of the title, did you provide more than 3 icons?")
   } else if(length(IconList) < 3) { # If there are less than 3 icons, this fills remaining slots in first row with empty plots if fewer icons than slots (including no icon list)
     for(icon in 1:length(IconList)){
       if(IconList[icon] == "Commercial_Fisheries_Herring_Mackerel_Lobster" |
@@ -382,22 +364,28 @@ makeDecisionTable <- function(data,
         print(paste("Icon", IconList[icon], sep="_"))
         IconImage <- eval(parse(text = paste("Icon", IconList[icon], sep="_")))
         IconImage <- raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
-      } else {
-        IconImage <- raster(IconList[icon])
-      }
-      PlotIcon <- gplot(IconImage) + geom_tile(aes(colour = cut(value, c(0,180,Inf)), fill=cut(value, c(0,180,Inf)))) +
-        scale_color_manual(name = "UniqueScale",
-                           values = c("(0,180]" = IconColor,
-                                      "(180,Inf]" = "white"),breaks=NULL, na.value=IconColor) +
-        scale_fill_manual(name = "UniqueScale",
-                          values = c("(0,180]" = "black",
-                                     "(180,Inf]" = "white"),breaks=NULL, na.value=IconColor) +
-        coord_equal() +
-        theme(text = element_blank(),
-              rect = element_blank(),
-              line = element_blank())
 
-      GridList <- gList(GridList, as.grob(assign(paste("Icon_", icon, sep=""), PlotIcon)))
+        # Plot icon
+        PlotIcon <- gplot(IconImage) + geom_tile(aes(colour = cut(value, c(0,180,Inf)), fill=cut(value, c(0,180,Inf)))) +
+          scale_color_manual(name = "UniqueScale",
+                             values = c("(0,180]" = IconColor,
+                                        "(180,Inf]" = "white"),breaks=NULL, na.value=IconColor) +
+          scale_fill_manual(name = "UniqueScale",
+                            values = c("(0,180]" = "black",
+                                       "(180,Inf]" = "white"),breaks=NULL, na.value=IconColor) +
+          coord_equal() +
+          theme(text = element_blank(),
+                rect = element_blank(),
+                line = element_blank())
+
+        GridList <- gList(GridList, as.grob(assign(paste("Icon_", icon, sep=""), PlotIcon)))
+
+      } else { # Use custom icon
+        IconGrob <- as.grob(ggdraw() + draw_image(IconList[icon]))
+        # Plot icon
+        print("Custom Icon")
+        GridList <- gList(GridList,IconGrob)
+      }
     }
     for(empty in 1:(3 - length(IconList))){
       EmptySpace <- textGrob(" ")
@@ -453,6 +441,7 @@ makeDecisionTable <- function(data,
     RowNameGrob <- textGrob(rownames(data)[irow], gp=gpar(cex=1*resolution))
     GridList <- gList(GridList, assign(paste("Row_", irow, "_Title", sep=""), RowNameGrob))
 
+    # Handle ranked performance as applicable
     if(visualRank == "TRUE"){ # Determine relative ranked performance
       # Determine rank of data and associated coloring by looping over columns in each row
       if(BestPerformanceVector[irow] == "High"){
@@ -466,7 +455,7 @@ makeDecisionTable <- function(data,
       RankOrder[irow,] <- seq(1:ncol(data))
     }
 
-    # Format barplots
+    # Handle confidence bounds if applicable
     if(IncludeCI == "TRUE"){
       # Make sure CI data in correct format (matrix)
       if(is.matrix(Data_LowerCI)==FALSE & is.data.frame(Data_LowerCI)==FALSE & is_tibble(Data_LowerCI)==FALSE){
@@ -476,7 +465,7 @@ makeDecisionTable <- function(data,
         Data_UpperCI <- matrix(Data_UpperCI, ...)
       }
 
-      # Plots
+      # Format & produce barplots
       for(icol in 1:ncol(data)){
         PlotData <- data.frame(data[irow, icol],data[irow, icol])
         colnames(PlotData) <- c("XX", "YY")
@@ -486,7 +475,11 @@ makeDecisionTable <- function(data,
         Error_LowerCI <- Data_LowerCI[irow, icol]
         limits <- aes(ymax = Error_UpperCI, ymin = Error_LowerCI)
 
-        Max_Y <- max(Data_UpperCI, data) # Pick max y-axis value either from the Data_UpperCI table or the data itself
+        if(yscalerow == TRUE){ # Pick a common y-axis scale for each row independently
+          Max_Y <- max(Data_UpperCI[irow,], data[irow,])
+        } else { # Pick common y-axis table for the full data table
+          Max_Y <- max(Data_UpperCI, data) # Pick max y-axis value either from the Data_UpperCI table or the data itself
+        }
 
         barplot <- ggplot(PlotData, aes(x=XX, y=YY))
         PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
@@ -514,9 +507,11 @@ makeDecisionTable <- function(data,
         colnames(PlotData) <- c("XX", "YY")
         PlotColor <- barColors[RankOrder[irow,icol]]
 
-        # Error_UpperCI <- Data_UpperCI[irow, icol]
-        # Error_LowerCI <- Data_LowerCI[irow, icol]
-        # limits <- aes(ymax = Error_UpperCI, ymin = Error_LowerCI)
+        if(yscalerow == TRUE){ # Pick a common y-axis scale for each row independently
+          Max_Y <- max(data[irow,])
+        } else { # Pick common y-axis table for the full data table
+          Max_Y <- max(data) # Pick max y-axis value either from the Data_UpperCI table or the data itself
+        }
 
         barplot <- ggplot(PlotData, aes(x=XX, y=YY))
         PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
@@ -530,13 +525,13 @@ makeDecisionTable <- function(data,
                 axis.line.y = element_line(color="black", size=0.5*resolution),
                 text = element_text(size=12*resolution)) +
           labs(x = paste(round(data[irow,icol], digits=2))) + # Print value rounded to 2 digits below bar
-          scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0), limits=c(0,max(data)+2)) # y-axis must encompass uppermost data provided
+          scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0), limits=c(0,Max_Y+2)) # y-axis must encompass uppermost data provided
 
         # Save Barplot for formatting later
         GridList <- gList(GridList, as.grob(assign(paste("Barplot_row_", irow, "_column_", icol, sep=""), PrettyBarPlot)))
       }
     } # End of No CI section
-  } # End of repeating info
+  } # End of repeating plot section
 
 
   ########## Plot Summary Row as specified ##########

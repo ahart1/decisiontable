@@ -1,6 +1,6 @@
 # @title Select format for decision tables with 3 columns.
-# 
-# @description 
+#
+# @description
 # This function selects the format for decision tables with 3 columns and between 1 and 20 rows.
 # @param Data A matrix with row and column names, no default
 # @return GraphicFormat$GraphicNRow        Number of rows in graphic layout
@@ -9,21 +9,21 @@
 #               $GraphicBarColors   List of default colors for graphic bars# Format for Decision tables with 2 columns
 # @param SummaryRowOption A string indicating summary row option, default = no summary row
 #      "Off"          No summary row
-#      "MeanRank"     Summary row added, values represent mean rank across all rows in each column 
+#      "MeanRank"     Summary row added, values represent mean rank across all rows in each column
 #      "SumRank"      Summary row added, values represent summed rank across all rows in each column
 
 
 GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
   # This function sets graphic format for data matrix with 3 columns & 1-20 rows
-  
+
   # Args:
-     # Data: A matrix of data with row and colum names, default = NULL 
+     # Data: A matrix of data with row and colum names, default = NULL
   # Return:
      # GraphicFormat$GraphicNRow: Number of rows in graphic
      #              $GraphicNCol: Number of columns in graphic
      #              $GraphicLayout: Structure of layout
      #              $GraphicBarColors: List of default colors for graphic bars (1 per column)
-  
+
   ##### Set rows based on Data dimensions and SummaryRowOption #####
   # If SummaryRowOption = "Off" then rows determined by Data dimensions, otherwise another row should be added
   if(SummaryRowOption =="Off"){
@@ -31,19 +31,30 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
   } else{
     NumberRows <- nrow(Data)+1
   }
-  
+
   GraphicFormat <- NULL
-  
+
   GraphicFormat$GraphicBarColors <- c("#addd8e", "#238443", "#004529")
-    
+
   ##############################
   # NCol = 3
   ##############################
+  # graphicLayout <- c(1, 2, 3, 4, 5, rep(6, ncol+1), 5, 7, rep(8, ncol), 5, 7, rep(9, ncol), 5, 7, seq(from=10, to=12), 5, rep(13, ncol+1), 5)
+  # loopnums <- seq(from=13, to=13+nrow*5, by=5)
+  # for(inum in loopnums[-length(loopnums)]){
+  #   graphicLayout <- c(graphicLayout, seq(from=inum+1, to=inum+4), 5)
+  #   graphicLayout <- c(graphicLayout, rep(inum+5, ncol+1), 5)
+  # }
+  # graphicFormat$graphicLayout <- graphicLayout
+  # graphicFormat$graphicNrow <- 6+nrow(data)*2
+  # graphicFormat$graphicNcol <- 5
+
+
   if(NumberRows == 1){
     GraphicFormat$GraphicNRow <- 8
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -53,8 +64,8 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
   } else if(NumberRows == 2){
     GraphicFormat$GraphicNRow <- 10
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -66,8 +77,8 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
   } else if(NumberRows == 3){
     GraphicFormat$GraphicNRow <- 12
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -77,12 +88,12 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        19, 20, 21, 22,   5,
                                        23, 23, 23, 23,   5,
                                        24, 25, 26, 27,   5,
-                                       28, 28, 28, 28,   5) 
+                                       28, 28, 28, 28,   5)
   } else if(NumberRows == 4){
     GraphicFormat$GraphicNRow <- 14
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -94,12 +105,12 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        24, 25, 26, 27,   5,
                                        28, 28, 28, 28,   5,
                                        29, 30, 31, 32,   5,
-                                       33, 33, 33, 33,   5) 
+                                       33, 33, 33, 33,   5)
   } else if(NumberRows == 5){
     GraphicFormat$GraphicNRow <- 16
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -113,12 +124,12 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        29, 30, 31, 32,   5,
                                        33, 33, 33, 33,   5,
                                        34, 35, 36, 37,   5,
-                                       38, 38, 38, 38,   5) 
+                                       38, 38, 38, 38,   5)
   } else if(NumberRows == 6){
     GraphicFormat$GraphicNRow <- 18
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -134,12 +145,12 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        34, 35, 36, 37,   5,
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
-                                       43, 43, 43, 43,   5)   
+                                       43, 43, 43, 43,   5)
   } else if(NumberRows == 7){
     GraphicFormat$GraphicNRow <- 20
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -156,13 +167,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
-                                       48, 48, 48, 48,   5)  
+                                       44, 45, 46, 47,   5,
+                                       48, 48, 48, 48,   5)
   } else if(NumberRows == 8){
     GraphicFormat$GraphicNRow <- 22
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -179,15 +190,15 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
-                                       53, 53, 53, 53,   5)  
+                                       53, 53, 53, 53,   5)
   } else if(NumberRows == 9){
     GraphicFormat$GraphicNRow <- 24
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -204,17 +215,17 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
-                                       58, 58, 58, 58,   5)  
+                                       58, 58, 58, 58,   5)
   } else if(NumberRows == 10){
     GraphicFormat$GraphicNRow <- 26
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -231,19 +242,19 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
-                                       63, 63, 63, 63,   5)   
+                                       59, 60, 61, 62,   5,
+                                       63, 63, 63, 63,   5)
   } else if(NumberRows == 11){
     GraphicFormat$GraphicNRow <- 28
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -260,21 +271,21 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
-                                       68, 68, 68, 68,   5)   
+                                       68, 68, 68, 68,   5)
   } else if(NumberRows == 12){
     GraphicFormat$GraphicNRow <- 30
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -291,23 +302,23 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
                                        69, 70, 71, 72,   5,
-                                       73, 73, 73, 73,   5)   
+                                       73, 73, 73, 73,   5)
   } else if(NumberRows == 13){
     GraphicFormat$GraphicNRow <- 32
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -324,25 +335,25 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
                                        69, 70, 71, 72,   5,
                                        73, 73, 73, 73,   5,
                                        74, 75, 76, 77,   5,
-                                       78, 78, 78, 78,   5) 
+                                       78, 78, 78, 78,   5)
   } else if(NumberRows == 14){
     GraphicFormat$GraphicNRow <- 34
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -359,13 +370,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
@@ -374,12 +385,12 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        74, 75, 76, 77,   5,
                                        78, 78, 78, 78,   5,
                                        79, 80, 81, 82,   5,
-                                       83, 83, 83, 83,   5)  
+                                       83, 83, 83, 83,   5)
   } else if(NumberRows == 15){
     GraphicFormat$GraphicNRow <- 36
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -396,13 +407,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
@@ -413,12 +424,12 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        79, 80, 81, 82,   5,
                                        83, 83, 83, 83,   5,
                                        84, 85, 86, 87,   5,
-                                       88, 88, 88, 88,   5)  
+                                       88, 88, 88, 88,   5)
   } else if(NumberRows == 16){
     GraphicFormat$GraphicNRow <- 38
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -435,13 +446,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
@@ -454,12 +465,12 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        84, 85, 86, 87,   5,
                                        88, 88, 88, 88,   5,
                                        89, 90, 91, 92,   5,
-                                       93, 93, 93, 93,   5)   
+                                       93, 93, 93, 93,   5)
   } else if(NumberRows == 17){
     GraphicFormat$GraphicNRow <- 40
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -476,13 +487,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
@@ -496,13 +507,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        88, 88, 88, 88,   5,
                                        89, 90, 91, 92,   5,
                                        93, 93, 93, 93,   5,
-                                       94, 95, 96, 97,   5, 
-                                       98, 98, 98, 98,   5) 
+                                       94, 95, 96, 97,   5,
+                                       98, 98, 98, 98,   5)
   } else if(NumberRows == 18){
     GraphicFormat$GraphicNRow <- 42
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -519,13 +530,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
@@ -539,15 +550,15 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        88, 88, 88, 88,   5,
                                        89, 90, 91, 92,   5,
                                        93, 93, 93, 93,   5,
-                                       94, 95, 96, 97,   5, 
+                                       94, 95, 96, 97,   5,
                                        98, 98, 98, 98,   5,
                                        99,100,101,102,   5,
                                        103,103,103,103,  5)
   } else if(NumberRows == 19){
     GraphicFormat$GraphicNRow <- 44
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -564,13 +575,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
@@ -584,17 +595,17 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        88, 88, 88, 88,   5,
                                        89, 90, 91, 92,   5,
                                        93, 93, 93, 93,   5,
-                                       94, 95, 96, 97,   5, 
+                                       94, 95, 96, 97,   5,
                                        98, 98, 98, 98,   5,
                                        99,100,101,102,   5,
                                        103,103,103,103,  5,
                                        104,105,106,107,  5,
-                                       108,108,108,108,  5)  
+                                       108,108,108,108,  5)
   } else if(NumberRows == 20){
     GraphicFormat$GraphicNRow <- 46
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -611,13 +622,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
@@ -631,7 +642,7 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        88, 88, 88, 88,   5,
                                        89, 90, 91, 92,   5,
                                        93, 93, 93, 93,   5,
-                                       94, 95, 96, 97,   5, 
+                                       94, 95, 96, 97,   5,
                                        98, 98, 98, 98,   5,
                                        99,100,101,102,   5,
                                        103,103,103,103,  5,
@@ -642,8 +653,8 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
   } else if(NumberRows == 21){
     GraphicFormat$GraphicNRow <- 48
     GraphicFormat$GraphicNCol <- 5
-    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,  
-                                       6,  6,  6,  6,   5,  
+    GraphicFormat$GraphicLayout <- c(  1,  2,  3,  4,   5,
+                                       6,  6,  6,  6,   5,
                                        7,  8,  8,  8,   5,
                                        7,  9,  9,  9,   5,
                                        7, 10, 11, 12,   5,
@@ -660,13 +671,13 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        38, 38, 38, 38,   5,
                                        39, 40, 41, 42,   5,
                                        43, 43, 43, 43,   5,
-                                       44, 45, 46, 47,   5, 
+                                       44, 45, 46, 47,   5,
                                        48, 48, 48, 48,   5,
                                        49, 50, 51, 52,   5,
                                        53, 53, 53, 53,   5,
                                        54, 55, 56, 57,   5,
                                        58, 58, 58, 58,   5,
-                                       59, 60, 61, 62,   5, 
+                                       59, 60, 61, 62,   5,
                                        63, 63, 63, 63,   5,
                                        64, 65, 66, 67,   5,
                                        68, 68, 68, 68,   5,
@@ -680,7 +691,7 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        88, 88, 88, 88,   5,
                                        89, 90, 91, 92,   5,
                                        93, 93, 93, 93,   5,
-                                       94, 95, 96, 97,   5, 
+                                       94, 95, 96, 97,   5,
                                        98, 98, 98, 98,   5,
                                        99,100,101,102,   5,
                                        103,103,103,103,  5,
@@ -691,9 +702,8 @@ GraphicFormat3Col <- function(Data, SummaryRowOption = "Off"){
                                        114,115,116,117,  5,
                                        118,118,118,118,  5)
   }
-  
+
   return(GraphicFormat)
 }
 
 
-  

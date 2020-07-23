@@ -69,15 +69,19 @@
 #'
 #' @examples
 #' Produce example decision table and save as DecisionTable.png in current working directory.
-#' MakeDecisionTable(data = TestMatrix_Ncol_4_Nrow_3, BestPerformanceVector = c("High","High","High","High"))
-#' MakeDecisionTable(data = TestMatrix_Ncol_4_Nrow_3, BestPerformanceVector = c("High","High","High","High"),
-#'                   IconList = c("Tuna", "Groundfish_Fishery", "Environmental_Considerations"))
-#' MakeDecisionTable(data = TestMatrix_Ncol_4_Nrow_3, BestPerformanceVector = c("High","High","High","High"),
-#'                   IconList = c("Protected_Species", "Commercial_Fisheries_Herring_Mackerel_Lobster", "Predator_Species_Tuna_Haddock_Flatfish"),
-#'                   IconColor = "blue")
-#' MakeDecisionTable(data = TestMatrix_Ncol_4_Nrow_3, BestPerformanceVector = c("High","High","High","High"),
-#'                   SummaryBestPerformance = c("High","High","High","High"),
-#'                   SummaryRowOption = "SumRank")
+#'
+#' Example dataframe
+#' set.seed(1)
+#' data_df <- matrix(c(abs(rnorm(30,20,sd=5))), ncol = 5, nrow = 6)
+#' colnames(data_df) <- c("Column 1", "Column 2", "Column 3", "Column 4", "Column 5")
+#' rownames(data_df) <- c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6")
+#'
+#' # Decision table with efault graphic settings, custom title and headers
+#' makeDecisionTable(data = data_df, OutputFileName = "Example1", GraphicTitle = "Example decision table with default formatting", RowHeader = "Row header \n describes type \n of data in rows", ColumnHeader = "Column header describes type of data in columns")
+#' # Decision table with ranked coloring scheme, darker colors correspond with better (larger) values in each row
+#' makeDecisionTable(data = data_df, OutputFileName = "Example2", GraphicTitle = "Example decision table with ranked performance", RowHeader = "Row header \n describes type \n of data in rows", ColumnHeader = "Column header describes type of data in columns", BestPerformanceVector = rep("High", nrow(data_df)), barColors = "defaultRankColor", visualRank = "TRUE")
+#' # Decision table with summary row showing sum values for each column, single custom color.
+#' makeDecisionTable(data = data_df, OutputFileName = "Example3", GraphicTitle = "Example decision table with summary row", RowHeader = "Row header \n describes type \n of data in rows", ColumnHeader = "Column header describes type of data in columns", barColors = "cadetblue3", SummaryRowOption = "SumValue", SummaryBestPerformance = "High")
 #'
 
 

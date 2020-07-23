@@ -13,27 +13,6 @@ trade-offs and are easily reproduced. The package leverages bar plots,
 coloring options, layout choices, and optional summary information to
 highlight and display trade-offs.
 
-``` r
-library(decisiontable)
-
-# Example data
-set.seed(1)
-data_df <- matrix(c(abs(rnorm(30,20,sd=5))), ncol = 5, nrow = 6)
-colnames(data_df) <- c("Column 1", "Column 2", "Column 3", "Column 4", "Column 5")
-rownames(data_df) <- c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6")
-
-makeDecisionTable(data = data_df,
-                  BestPerformanceVector = rep("High", nrow(data_df)),
-                  barColors = "defaultRankColor",
-                  visualRank = "TRUE",
-                  OutputFileName = "Readme_Fig1",
-                  GraphicTitle = "Example Decision Table",
-                  RowHeader = "Make comparisons \n across rows",
-                  ColumnHeader = "Make comparisons across columns",
-                  figureWidth = 650,
-                  figureHeight = 800)
-```
-
 ![Decision table created using the dataframe
 option](Readme_Fig1.png)
 
@@ -96,10 +75,8 @@ makeDecisionTable(data = data_df,
 #>                 2
 ```
 
-![Decision table created using the dataframe
-option](Readme_Fig2.png)
+![Decision table created using the dataframe option](Readme_Fig2.png)
 
 To get an introduction to other features of the package, read the
 [introductory
-vignette](https://github.com/ahart1/decisiontable/blob/master/vignettes/decisiontable.Rmd).
-
+vignette](https://github.com/ahart1/decisiontable/blob/master/vignettes/decisiontable.html).

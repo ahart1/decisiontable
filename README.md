@@ -101,4 +101,5 @@ option](Readme_Fig2.png)
 
 To get an introduction to other features of the package, read the
 [introductory
-vignette](https://github.com/ahart1/decisiontable/blob/master/vignettes/decisiontable.html).
+vignette](https://github.com/ahart1/decisiontable/blob/master/vignettes/decisiontable.Rmd).
+

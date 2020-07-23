@@ -35,7 +35,7 @@ makeDecisionTable(data = data_df,
 ```
 
 ![Decision table created using the dataframe
-option](/Users/ahart2/Research/decisiontable/Readme_Fig1.png)
+option](Readme_Fig1.png)
 
 ## Installation
 

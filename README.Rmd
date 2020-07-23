@@ -19,8 +19,8 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 The goal of decisiontable is to combine text-based tables with graphical elements to produce flexible decision table visualizations that convey trade-offs and are easily reproduced. The package leverages bar plots, coloring options, layout choices, and optional summary information to highlight and display trade-offs.
-
-```{r pressure, echo = FALSE}
+```{r include=FALSE}
+# Should have same code as below, evaluated but not included in Rmd output
 library(decisiontable)
 
 # Example data
@@ -33,15 +33,34 @@ makeDecisionTable(data = data_df,
                   BestPerformanceVector = rep("High", nrow(data_df)),
                   barColors = "defaultRankColor",
                   visualRank = "TRUE",
-                  OutputDirectory = here::here(),
-                  OutputFileName = paste("Readme_Fig1"),
+                  OutputFileName = "Readme_Fig1",
                   GraphicTitle = "Example Decision Table",
-                  RowHeader = "Make comparisons across rows",
-                  ColumnHeader = "Make comparisons \n across columns",
+                  RowHeader = "Make comparisons \n across rows",
+                  ColumnHeader = "Make comparisons across columns",
                   figureWidth = 650,
                   figureHeight = 800)
 ```
-![Decision table created using the dataframe option](here::here("Readme_Fig1.png"))
+```{r eval=FALSE}
+library(decisiontable)
+
+# Example data
+set.seed(1)
+data_df <- matrix(c(abs(rnorm(30,20,sd=5))), ncol = 5, nrow = 6)
+colnames(data_df) <- c("Column 1", "Column 2", "Column 3", "Column 4", "Column 5")
+rownames(data_df) <- c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6")
+
+makeDecisionTable(data = data_df,
+                  BestPerformanceVector = rep("High", nrow(data_df)),
+                  barColors = "defaultRankColor",
+                  visualRank = "TRUE",
+                  OutputFileName = "Readme_Fig1",
+                  GraphicTitle = "Example Decision Table",
+                  RowHeader = "Make comparisons \n across rows",
+                  ColumnHeader = "Make comparisons across columns",
+                  figureWidth = 650,
+                  figureHeight = 800)
+```
+![Decision table created using the dataframe option](/Users/ahart2/Research/decisiontable/Readme_Fig1.png)
 
 ## Installation
 
@@ -65,7 +84,7 @@ The `makeDecisionTable()` function is the powerhouse of this package. With it ba
 
 Most simply, default function settings can be used to produce a decision table figure where bar chart height coresponds to the printed values along the x-axis of each plot and row and column labels are pulled from the input dataframe. Only the output file name, title, and row headers need be specified to produce an informative decision table. The figure will automatically be stored as a .png file in your current working directory.
 
-```{r example}
+```{r echo='TRUE'}
 library(decisiontable)
 
 # Here is an example dataframe
@@ -78,11 +97,11 @@ rownames(data_df) <- c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6")
 # Produce a simple decision table figure using default formatting and minimal input
 makeDecisionTable(data = data_df,
                   OutputFileName = "Readme_Fig2",
-                  GraphicTitle = "Example decision table with default formatting",
+                  GraphicTitle = "Decision table with \n default formatting",
                   RowHeader = "Row header \n describes type \n of data in rows",
                   ColumnHeader = "Column header describes type of data in columns")
 ```
-![Decision table created using the dataframe option](here::here("Readme_Fig2.png"))
+![Decision table created using the dataframe option](/Users/ahart2/Research/decisiontable/Readme_Fig2.png)
 
 To get an introduction to other features of the package, read the [introductory vignette](https://github.com/ahart1/decisiontable/blob/master/vignettes/decisiontable.html). 
 

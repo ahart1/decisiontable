@@ -97,7 +97,7 @@ makeDecisionTable(data = data_df,
 ```
 
 ![Decision table created using the dataframe
-option](/Users/ahart2/Research/decisiontable/Readme_Fig2.png)
+option](/decisiontable/Readme_Fig2.png)
 
 To get an introduction to other features of the package, read the
 [introductory

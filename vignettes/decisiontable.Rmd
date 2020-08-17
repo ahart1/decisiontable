@@ -252,7 +252,7 @@ makeDecisionTable(data = data_df,
                   ColumnHeader = "Example Column Header",
                   figureWidth = 650,
                   figureHeight = 800,
-                  IconList = c("/Users/ahart2/Downloads/Fish3.png", "Commercial_Fisheries_Herring_Mackerel_Lobster", "Environmental_Considerations"),
+                  IconList = c("https://upload.wikimedia.org/wikipedia/commons/b/bc/Fish_P_icon.png", "Commercial_Fisheries_Herring_Mackerel_Lobster", "Environmental_Considerations"),
                   IconColor = "blue")
 ```
 

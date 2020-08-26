@@ -16,6 +16,9 @@
 #' @param data A data matrix with dimensions matching the desired decision table or a vector equal in length to the number of cells in the desired decision table. By default vectors will fill the table by column according to the dimensions specified by `nrow` and `ncol` arguments, no default.
 #' @param rownames A vector of strings equal in length to the number of rows to be used as row names for the decision table when data is provided as a vector, no default.
 #' @param colnames A vector of strings equal in length to the number of columns to be used as column names for the decision table when data is provided as a vector, no default.
+#' @param nrow A number indicating the number of rows to be included when data is provided as a vector, no default.
+#' @param ncol A number indicating the number of columns to be included when data is provided as a vector, no default.
+#' @param byrow A boolean string indicating whether data provided as a vector fills the table by row or not, default = TRUE.
 #' @param OutputDirectory A string containing the full path name of folder where resulting graphic should be stored, default = current working directory
 #' @param OutputFileName A string containing the file name for the resulting graphic, default = "DecisionTable"
 #' @param GraphicTitle A string containing the title for the decision table graphic, default = "Title"
@@ -68,9 +71,9 @@
 #' @export
 #'
 #' @examples
-#' Produce example decision table and save as DecisionTable.png in current working directory.
+#' # Produce example decision table and save as DecisionTable.png in current working directory.
 #'
-#' Example dataframe
+#' # Example dataframe
 #' set.seed(1)
 #' data_df <- matrix(c(abs(rnorm(30,20,sd=5))), ncol = 5, nrow = 6)
 #' colnames(data_df) <- c("Column 1", "Column 2", "Column 3", "Column 4", "Column 5")
@@ -93,6 +96,9 @@
 makeDecisionTable <- function(data,
                               rownames = NULL,
                               colnames = NULL,
+                              nrow = NULL,
+                              ncol = NULL,
+                              byrow = TRUE,
                               OutputDirectory = getwd(),
                               OutputFileName = "DecisionTable",
                               GraphicTitle = "Title",
@@ -114,12 +120,11 @@ makeDecisionTable <- function(data,
                               Data_UpperCI = NULL,
                               Data_LowerCI = NULL,
                               IconList = NULL,
-                              IconColor = "black",
-                              ...){
+                              IconColor = "black"){
 
   # Process input data if a vector is provided
-  if(is.matrix(data)==FALSE & is.data.frame(data)==FALSE & is_tibble(data)==FALSE){
-    data <- matrix(data, ...)
+  if(is.matrix(data)==FALSE & is.data.frame(data)==FALSE & tibble::is_tibble(data)==FALSE){
+    data <- matrix(data, nrow = nrow, ncol = ncol, byrow = byrow)
     # row & column names
     rownames(data) <- rownames
     colnames(data) <- colnames
@@ -281,8 +286,8 @@ makeDecisionTable <- function(data,
 
   ########## Set up title and headers for table ##########
   # GraphicTitle
-  GraphicTitleGrob <- textGrob(GraphicTitle, gp=gpar(cex=1.5*resolution))
-  GridList <- gList(GridList, GraphicTitleGrob)
+  GraphicTitleGrob <- grid::textGrob(GraphicTitle, gp=grid::gpar(cex=1.5*resolution))
+  GridList <- grid::gList(GridList, GraphicTitleGrob)
 
   # Optional printed icons to right of title, may not exceed 3 icons
   if(length(IconList) == 3){ # If there are 3 icons
@@ -307,15 +312,15 @@ makeDecisionTable <- function(data,
          # raster IconImage is from .RData file
           print(paste("Icon", IconList[icon], sep="_"))
           IconImage <- eval(parse(text = paste("Icon", IconList[icon], sep="_")))
-          IconImage <- raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
+          IconImage <- raster::raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
 
           # Plot icon
-          PlotIcon <- gplot(IconImage) + geom_tile(aes(colour = cut(value, breaks = c(-100,0,180,Inf)), fill=cut(value, breaks = c(-100,0,180,Inf)))) + # Alter middle number to change pixels coloring
-            scale_color_manual(name = "UniqueScale",
+          PlotIcon <- rasterVis::gplot(IconImage) + geom_tile(ggplot2::aes(colour = cut(value, breaks = c(-100,0,180,Inf)), fill=cut(value, breaks = c(-100,0,180,Inf)))) + # Alter middle number to change pixels coloring
+            ggplot2::scale_color_manual(name = "UniqueScale",
                                values = c("(0,180]" = IconColor,
                                           "(180,Inf]" = "white",
                                           "(-100,0]" = IconColor),breaks=NULL, na.value=IconColor) +
-            scale_fill_manual(name = "UniqueScale",
+            ggplot2::scale_fill_manual(name = "UniqueScale",
                               values = c("(0,180]" = IconColor,
                                          "(180,Inf]" = "white",
                                          "(-100,0]" = IconColor),breaks=NULL, na.value=IconColor) +
@@ -324,25 +329,25 @@ makeDecisionTable <- function(data,
                   rect = element_blank(),
                   line = element_blank())
 
-          GridList <- gList(GridList, as.grob(assign(paste("Icon_", icon, sep=""), PlotIcon)))
+          GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("Icon_", icon, sep=""), PlotIcon)))
 
         } else { # Use custom icon
-          IconGrob <- as.grob(ggdraw() + draw_image(IconList[icon]))
+          IconGrob <- ggplotify::as.grob(ggdraw() + draw_image(IconList[icon]))
           # Plot icon
           print("Custom Icon")
-          GridList <- gList(GridList,IconGrob)
+          GridList <- grid::gList(GridList,IconGrob)
         }
     }
   } else if(is.null(IconList)==TRUE){ # If there are no icons provided to argument
     for(empty in 1:3){ # Fill all columns except title in first row with empty plot (Title, empty the rest of row)
-      EmptySpace <- textGrob(" ")
-      GridList <- gList(GridList, EmptySpace)
+      EmptySpace <- grid::textGrob(" ")
+      GridList <- grid::gList(GridList, EmptySpace)
       print("Empty Plot Icon" )
     }
   } else if(length(IconList) > 3){ # If there are more than 3 icons don't print any and return a warning
     for(empty in 1:3){ # Fill all columns except title in first row with empty plot (Title, empty the rest of row)
-      EmptySpace <- textGrob(" ")
-      GridList <- gList(GridList, EmptySpace)
+      EmptySpace <- grid::textGrob(" ")
+      GridList <- grid::gList(GridList, EmptySpace)
       print("Empty Plot Icon" )
     }
     warning("A maximum of 3 icons can be printed to the right of the title, did you provide more than 3 icons?")
@@ -367,14 +372,14 @@ makeDecisionTable <- function(data,
         # raster IconImage is from .RData file
         print(paste("Icon", IconList[icon], sep="_"))
         IconImage <- eval(parse(text = paste("Icon", IconList[icon], sep="_")))
-        IconImage <- raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
+        IconImage <- raster::raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
 
         # Plot icon
-        PlotIcon <- gplot(IconImage) + geom_tile(aes(colour = cut(value, c(0,180,Inf)), fill=cut(value, c(0,180,Inf)))) +
-          scale_color_manual(name = "UniqueScale",
+        PlotIcon <- rasterVis::gplot(IconImage) + geom_tile(ggplot2::aes(colour = cut(value, c(0,180,Inf)), fill=cut(value, c(0,180,Inf)))) +
+          ggplot2::scale_color_manual(name = "UniqueScale",
                              values = c("(0,180]" = IconColor,
                                         "(180,Inf]" = "white"),breaks=NULL, na.value=IconColor) +
-          scale_fill_manual(name = "UniqueScale",
+          ggplot2::scale_fill_manual(name = "UniqueScale",
                             values = c("(0,180]" = "black",
                                        "(180,Inf]" = "white"),breaks=NULL, na.value=IconColor) +
           coord_equal() +
@@ -382,29 +387,29 @@ makeDecisionTable <- function(data,
                 rect = element_blank(),
                 line = element_blank())
 
-        GridList <- gList(GridList, as.grob(assign(paste("Icon_", icon, sep=""), PlotIcon)))
+        GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("Icon_", icon, sep=""), PlotIcon)))
 
       } else { # Use custom icon
-        IconGrob <- as.grob(ggdraw() + draw_image(IconList[icon]))
+        IconGrob <- ggplotify::as.grob(ggdraw() + draw_image(IconList[icon]))
         # Plot icon
         print("Custom Icon")
-        GridList <- gList(GridList,IconGrob)
+        GridList <- grid::gList(GridList,IconGrob)
       }
     }
     for(empty in 1:(3 - length(IconList))){
-      EmptySpace <- textGrob(" ")
-      GridList <- gList(GridList, EmptySpace)
+      EmptySpace <- grid::textGrob(" ")
+      GridList <- grid::gList(GridList, EmptySpace)
       print("Empty Plot Icon" )
     }
   } # End of < 3 icons section
 
   # Plot empty space on right side of graph
-  EmptySpace <- textGrob(" ")
-  GridList <- gList(GridList, EmptySpace)
+  EmptySpace <- grid::textGrob(" ")
+  GridList <- grid::gList(GridList, EmptySpace)
 
   # Plot first horizontal division
   EmptyDataFrame <- data.frame()
-  HorizontalLine <- ggplot(EmptyDataFrame) +
+  HorizontalLine <- ggplot2::ggplot(EmptyDataFrame) +
     geom_hline(yintercept = 0) +
     theme(axis.text.x=element_blank(),
           axis.text.y=element_blank(),
@@ -413,37 +418,37 @@ makeDecisionTable <- function(data,
           axis.title.y=element_blank(),
           axis.title.x=element_blank(),
           panel.background = element_blank())
-  HorizontalLine <- as.grob(HorizontalLine) # Make ggplot a grob, could alternatively do this in the following line, but doing it here means I only do it once (not for every horizontal line)
+  HorizontalLine <- ggplotify::as.grob(HorizontalLine) # Make ggplot a grob, could alternatively do this in the following line, but doing it here means I only do it once (not for every horizontal line)
   for(i in graphicFormat$graphicNcol){
-    GridList <- gList(GridList, HorizontalLine)
+    GridList <- grid::gList(GridList, HorizontalLine)
   }
 
   # RowHeader
-  RowHeaderLabel <- textGrob(RowHeader, gp=gpar(cex=1.2*resolution))
-  GridList <- gList(GridList, RowHeaderLabel)
+  RowHeaderLabel <- grid::textGrob(RowHeader, gp=grid::gpar(cex=1.2*resolution))
+  GridList <- grid::gList(GridList, RowHeaderLabel)
 
   # ColumnHeader
-  ColumnHeaderLabel <- textGrob(ColumnHeader, gp=gpar(cex=1.2*resolution))
-  GridList <- gList(GridList, ColumnHeaderLabel)
+  ColumnHeaderLabel <- grid::textGrob(ColumnHeader, gp=grid::gpar(cex=1.2*resolution))
+  GridList <- grid::gList(GridList, ColumnHeaderLabel)
 
   # Plot horizontal division line
-  GridList <- gList(GridList, HorizontalLine)
+  GridList <- grid::gList(GridList, HorizontalLine)
 
   # Plot column names
   for(Name in 1:ncol(data)){
-    ColNameGrob <- textGrob(colnames(data)[Name], gp=gpar(cex=1*resolution))
-    GridList <- gList(GridList, assign(paste("Column_", Name, "_Title", sep=""), ColNameGrob))
+    ColNameGrob <- grid::textGrob(colnames(data)[Name], gp=grid::gpar(cex=1*resolution))
+    GridList <- grid::gList(GridList, assign(paste("Column_", Name, "_Title", sep=""), ColNameGrob))
   }
 
 
   ########## Repeating information in the table (plot data matrix) ##########
   for(irow in 1:nrow(data)){
     # Plot horizontal division line
-    GridList <- gList(GridList, HorizontalLine)
+    GridList <- grid::gList(GridList, HorizontalLine)
 
     # Plot RowName
-    RowNameGrob <- textGrob(rownames(data)[irow], gp=gpar(cex=1*resolution))
-    GridList <- gList(GridList, assign(paste("Row_", irow, "_Title", sep=""), RowNameGrob))
+    RowNameGrob <- grid::textGrob(rownames(data)[irow], gp=grid::gpar(cex=1*resolution))
+    GridList <- grid::gList(GridList, assign(paste("Row_", irow, "_Title", sep=""), RowNameGrob))
 
     # Handle ranked performance as applicable
     if(visualRank == "TRUE"){ # Determine relative ranked performance
@@ -462,10 +467,10 @@ makeDecisionTable <- function(data,
     # Handle confidence bounds if applicable
     if(IncludeCI == "TRUE"){
       # Make sure CI data in correct format (matrix)
-      if(is.matrix(Data_LowerCI)==FALSE & is.data.frame(Data_LowerCI)==FALSE & is_tibble(Data_LowerCI)==FALSE){
+      if(is.matrix(Data_LowerCI)==FALSE & is.data.frame(Data_LowerCI)==FALSE & tibble::is_tibble(Data_LowerCI)==FALSE){
         Data_LowerCI <- matrix(Data_LowerCI, ...)
       }
-      if(is.matrix(Data_UpperCI)==FALSE & is.data.frame(Data_UpperCI)==FALSE & is_tibble(Data_UpperCI)==FALSE){
+      if(is.matrix(Data_UpperCI)==FALSE & is.data.frame(Data_UpperCI)==FALSE & tibble::is_tibble(Data_UpperCI)==FALSE){
         Data_UpperCI <- matrix(Data_UpperCI, ...)
       }
 
@@ -477,7 +482,7 @@ makeDecisionTable <- function(data,
 
         Error_UpperCI <- Data_UpperCI[irow, icol]
         Error_LowerCI <- Data_LowerCI[irow, icol]
-        limits <- aes(ymax = Error_UpperCI, ymin = Error_LowerCI)
+        limits <- ggplot2::aes(ymax = Error_UpperCI, ymin = Error_LowerCI)
 
         if(yscalerow == TRUE){ # Pick a common y-axis scale for each row independently
           Max_Y <- max(Data_UpperCI[irow,], data[irow,])
@@ -485,7 +490,7 @@ makeDecisionTable <- function(data,
           Max_Y <- max(Data_UpperCI, data) # Pick max y-axis value either from the Data_UpperCI table or the data itself
         }
 
-        barplot <- ggplot(PlotData, aes(x=XX, y=YY))
+        barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
         PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
           geom_errorbar(limits, width = 0.25, size=0.5*resolution) +
           theme(axis.text.x=element_blank(),
@@ -503,7 +508,7 @@ makeDecisionTable <- function(data,
           # scale_y_continuous(expand = c(0,0), limits=c(0,Max_Y)+2) # y-axis must encompass uppermost CI provided
 
         # Save Barplot for formatting later
-        GridList <- gList(GridList, as.grob(assign(paste("CIBarplot_row_", irow, "_column_", icol, sep=""), PrettyBarPlot)))
+        GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("CIBarplot_row_", irow, "_column_", icol, sep=""), PrettyBarPlot)))
       }
     } else { # Don't include CI
       for(icol in 1:ncol(data)){
@@ -517,7 +522,7 @@ makeDecisionTable <- function(data,
           Max_Y <- max(data) # Pick max y-axis value either from the Data_UpperCI table or the data itself
         }
 
-        barplot <- ggplot(PlotData, aes(x=XX, y=YY))
+        barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
         PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
           theme(axis.text.x=element_blank(),
                 axis.text.y=element_text(size=10*resolution),
@@ -532,7 +537,7 @@ makeDecisionTable <- function(data,
           scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0), limits=c(0,Max_Y+2)) # y-axis must encompass uppermost data provided
 
         # Save Barplot for formatting later
-        GridList <- gList(GridList, as.grob(assign(paste("Barplot_row_", irow, "_column_", icol, sep=""), PrettyBarPlot)))
+        GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("Barplot_row_", irow, "_column_", icol, sep=""), PrettyBarPlot)))
       }
     } # End of No CI section
   } # End of repeating plot section
@@ -549,11 +554,11 @@ makeDecisionTable <- function(data,
     SummaryRankOrder <- rank(SummaryRowData)
 
     # Plot horizontal division line
-    GridList <- gList(GridList, HorizontalLine)
+    GridList <- grid::gList(GridList, HorizontalLine)
 
     # Plot RowName
-    RowNameGrob <- textGrob("Summary", gp=gpar(cex=1.2*resolution))
-    GridList <- gList(GridList, assign("SummaryRowTitle", RowNameGrob))
+    RowNameGrob <- grid::textGrob("Summary", gp=grid::gpar(cex=1.2*resolution))
+    GridList <- grid::gList(GridList, assign("SummaryRowTitle", RowNameGrob))
 
     # Plot bars
     for(icol in 1:length(SummaryRowData)){
@@ -561,7 +566,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot(data=PlotData, aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(data=PlotData, ggplot2::aes(x=XX, y=YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -576,7 +581,7 @@ makeDecisionTable <- function(data,
         scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0), limits=c(0,max(SummaryRowData)+1))
 
       # Save Barplot for formatting later
-      GridList <- gList(GridList, as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
+      GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
     }
   } else if(SummaryRowOption == "SumRank"){ ########## SummaryRowOption = "SumRank" ##################################################
     # Calculate summary row data as specified
@@ -586,11 +591,11 @@ makeDecisionTable <- function(data,
     SummaryRankOrder <- rank(SummaryRowData)
 
     # Plot horizontal division line
-    GridList <- gList(GridList, HorizontalLine)
+    GridList <- grid::gList(GridList, HorizontalLine)
 
     # Plot RowName
-    RowNameGrob <- textGrob("Summary", gp=gpar(cex=1.2*resolution))
-    GridList <- gList(GridList, assign("SummaryRowTitle", RowNameGrob))
+    RowNameGrob <- grid::textGrob("Summary", gp=grid::gpar(cex=1.2*resolution))
+    GridList <- grid::gList(GridList, assign("SummaryRowTitle", RowNameGrob))
 
     # Plot bars
     for(icol in 1:length(SummaryRowData)){
@@ -598,7 +603,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot(PlotData, aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -613,7 +618,7 @@ makeDecisionTable <- function(data,
         scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0),limits=c(0,((graphicFormat$graphicNcol-2)*((graphicFormat$graphicNrow-8)/2)+2))) # Scales against highest possible rank (sum best rank across all rows)
 
       # Save Barplot for formatting later
-      GridList <- gList(GridList, as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
+      GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
     }
   } else if(SummaryRowOption == "MedianRank"){ ########## SummaryRowOption = "MedianRank" ##################################################
     # Calculate summary row data as specified
@@ -623,11 +628,11 @@ makeDecisionTable <- function(data,
     SummaryRankOrder <- rank(SummaryRowData)
 
     # Plot horizontal division line
-    GridList <- gList(GridList, HorizontalLine)
+    GridList <- grid::gList(GridList, HorizontalLine)
 
     # Plot RowName
-    RowNameGrob <- textGrob("Summary", gp=gpar(cex=1.2*resolution))
-    GridList <- gList(GridList, assign("SummaryRowTitle", RowNameGrob))
+    RowNameGrob <- grid::textGrob("Summary", gp=grid::gpar(cex=1.2*resolution))
+    GridList <- grid::gList(GridList, assign("SummaryRowTitle", RowNameGrob))
 
     # Plot bars
     for(icol in 1:length(SummaryRowData)){
@@ -635,7 +640,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot(PlotData, aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -650,7 +655,7 @@ makeDecisionTable <- function(data,
         scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0), limits=c(0,max(SummaryRowData)+1))
 
       # Save Barplot for formatting later
-      GridList <- gList(GridList, as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
+      GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
     }
   } else if(SummaryRowOption == "MeanValue"){ ########## SummaryRowOption = "MeanValue" ##################################################
     # Calculate summary row data as specified
@@ -666,11 +671,11 @@ makeDecisionTable <- function(data,
     }
 
     # Plot horizontal division line
-    GridList <- gList(GridList, HorizontalLine)
+    GridList <- grid::gList(GridList, HorizontalLine)
 
     # Plot RowName
-    RowNameGrob <- textGrob("Summary", gp=gpar(cex=1.2*resolution))
-    GridList <- gList(GridList, assign("SummaryRowTitle", RowNameGrob))
+    RowNameGrob <- grid::textGrob("Summary", gp=grid::gpar(cex=1.2*resolution))
+    GridList <- grid::gList(GridList, assign("SummaryRowTitle", RowNameGrob))
 
     # Plot bars
     for(icol in 1:length(SummaryRowData)){
@@ -678,7 +683,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot(PlotData, aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -693,7 +698,7 @@ makeDecisionTable <- function(data,
         scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0), limits=c(0,max(SummaryRowData)+1))
 
       # Save Barplot for formatting later
-      GridList <- gList(GridList, as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
+      GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
     }
   } else if(SummaryRowOption == "SumValue"){ ########## SummaryRowOption = "SumValue" ##################################################
     # Calculate summary row data as specified
@@ -709,11 +714,11 @@ makeDecisionTable <- function(data,
     }
 
     # Plot horizontal division line
-    GridList <- gList(GridList, HorizontalLine)
+    GridList <- grid::gList(GridList, HorizontalLine)
 
     # Plot RowName
-    RowNameGrob <- textGrob("Summary", gp=gpar(cex=1.2*resolution))
-    GridList <- gList(GridList, assign("SummaryRowTitle", RowNameGrob))
+    RowNameGrob <- grid::textGrob("Summary", gp=grid::gpar(cex=1.2*resolution))
+    GridList <- grid::gList(GridList, assign("SummaryRowTitle", RowNameGrob))
 
     # Plot bars
     for(icol in 1:length(SummaryRowData)){
@@ -721,7 +726,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot(PlotData, aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -736,7 +741,7 @@ makeDecisionTable <- function(data,
         scale_x_continuous(expand = c(0,0)) + scale_y_continuous(expand = c(0,0), limits=c(0,max(SummaryRowData)+2))
 
       # Save Barplot for formatting later
-      GridList <- gList(GridList, as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
+      GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
     }
   } else if(SummaryRowOption == "MedianValue"){ ########## SummaryRowOption = "MedianValue" ##################################################
     # Calculate summary row data as specified
@@ -752,11 +757,11 @@ makeDecisionTable <- function(data,
     }
 
     # Plot horizontal division line
-    GridList <- gList(GridList, HorizontalLine)
+    GridList <- grid::gList(GridList, HorizontalLine)
 
     # Plot RowName
-    RowNameGrob <- textGrob("Summary", gp=gpar(cex=1.2*resolution))
-    GridList <- gList(GridList, assign("SummaryRowTitle", RowNameGrob))
+    RowNameGrob <- grid::textGrob("Summary", gp=grid::gpar(cex=1.2*resolution))
+    GridList <- grid::gList(GridList, assign("SummaryRowTitle", RowNameGrob))
 
     # Plot bars
     for(icol in 1:length(SummaryRowData)){
@@ -764,7 +769,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot(PlotData, aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -780,7 +785,7 @@ makeDecisionTable <- function(data,
 
 
       # Save Barplot for formatting later
-      GridList <- gList(GridList, as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
+      GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("SummaryBarplot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyBarPlot)))
     }
   } else if(SummaryRowOption == "WhiskerPlot"){ ########## SummaryRowOption = "WhiskerPlot" ##################################################
     # Calculate summary row data to be used only for coloring this option
@@ -796,11 +801,11 @@ makeDecisionTable <- function(data,
     }
 
     # Plot horizontal division line
-    GridList <- gList(GridList, HorizontalLine)
+    GridList <- grid::gList(GridList, HorizontalLine)
 
     # Plot RowName
-    RowNameGrob <- textGrob("Summary", gp=gpar(cex=1.2*resolution))
-    GridList <- gList(GridList, assign("SummaryRowTitle", RowNameGrob))
+    RowNameGrob <- grid::textGrob("Summary", gp=grid::gpar(cex=1.2*resolution))
+    GridList <- grid::gList(GridList, assign("SummaryRowTitle", RowNameGrob))
 
     # Plot whisker plots with ranked coloring based on median
     for(icol in 1:ncol(data)){
@@ -809,7 +814,7 @@ makeDecisionTable <- function(data,
 
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      PrettyWhiskerPlot <- ggplot(as.data.frame(data), aes(y=data[,icol])) +
+      PrettyWhiskerPlot <- ggplot2::ggplot(as.data.frame(data), ggplot2::aes(y=data[,icol])) +
         geom_boxplot(color="black", fill=PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -827,17 +832,17 @@ makeDecisionTable <- function(data,
 
 
       # Save Barplot for formatting later
-      GridList <- gList(GridList, as.grob(assign(paste("SummaryWhiskerPlot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyWhiskerPlot)))
+      GridList <- grid::gList(GridList, ggplotify::as.grob(assign(paste("SummaryWhiskerPlot_row_", nrow(data)+1, "_column_", icol, sep=""), PrettyWhiskerPlot)))
     }
   }
 
   # Plot last horizontal division
-  GridList <- gList(GridList, HorizontalLine)
+  GridList <- grid::gList(GridList, HorizontalLine)
 
   ########## Format #########
-  #GridList <- gList(GridList) # Formally make everything in the GridList part of a grob list (if not done already)
-  grid.arrange(grobs = GridList, layout_matrix = matrix(graphicFormat$graphicLayout, nrow = graphicFormat$graphicNrow, ncol = graphicFormat$graphicNcol, byrow = TRUE), widths = GraphicWidths, heights = GraphicHeights, nrow = graphicFormat$graphicNrow, ncol = graphicFormat$graphicNcol, byrow = TRUE)
-  #grid.arrange(grobs = GridList, layout_matrix = graphicFormat$graphicLayout, widths = GraphicWidths, heights = GraphicHeights,  byrow = TRUE)
+  #GridList <- grid::gList(GridList) # Formally make everything in the GridList part of a grob list (if not done already)
+  gridExtra::grid.arrange(grobs = GridList, layout_matrix = matrix(graphicFormat$graphicLayout, nrow = graphicFormat$graphicNrow, ncol = graphicFormat$graphicNcol, byrow = TRUE), widths = GraphicWidths, heights = GraphicHeights, nrow = graphicFormat$graphicNrow, ncol = graphicFormat$graphicNcol, byrow = TRUE)
+  #gridExtra::grid.arrange(grobs = GridList, layout_matrix = graphicFormat$graphicLayout, widths = GraphicWidths, heights = GraphicHeights,  byrow = TRUE)
 
   dev.off()
 }

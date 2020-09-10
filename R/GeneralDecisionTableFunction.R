@@ -1,6 +1,18 @@
 # Reformated functions to produce barplots with error bars (relies on ggplot2 rather than base R for plots)
 
-
+#' @import cowplot
+#' @import ggplot2
+#' @import ggplotify
+#' @import grid
+#' @import gridExtra
+#' @import magick
+#' @import png
+#' @import raster
+#' @import rasterVis
+#' @import rgdal
+#' @import tibble
+#' @import tidyverse
+#' 
 #' @title Produce generalized decision tables with provided confidence intervals (optional) on bars.
 #'
 #' @description
@@ -410,14 +422,14 @@ makeDecisionTable <- function(data,
   # Plot first horizontal division
   EmptyDataFrame <- data.frame()
   HorizontalLine <- ggplot2::ggplot(EmptyDataFrame) +
-    geom_hline(yintercept = 0) +
-    theme(axis.text.x=element_blank(),
+    ggplot2::geom_hline(yintercept = 0) +
+    ggplot2::theme(axis.text.x=element_blank(),
           axis.text.y=element_blank(),
           axis.ticks.x=element_blank(),
           axis.ticks.y=element_blank(),
           axis.title.y=element_blank(),
           axis.title.x=element_blank(),
-          panel.background = element_blank())
+          panel.background = ggplot2::element_blank())
   HorizontalLine <- ggplotify::as.grob(HorizontalLine) # Make ggplot a grob, could alternatively do this in the following line, but doing it here means I only do it once (not for every horizontal line)
   for(i in graphicFormat$graphicNcol){
     GridList <- grid::gList(GridList, HorizontalLine)
@@ -493,12 +505,12 @@ makeDecisionTable <- function(data,
         barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
         PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
           geom_errorbar(limits, width = 0.25, size=0.5*resolution) +
-          theme(axis.text.x=element_blank(),
+          theme(axis.text.x=ggplot2::element_blank(),
                 axis.text.y=element_text(size=10*resolution),
-                axis.ticks.x=element_blank(),
-                axis.title.y=element_blank(),
+                axis.ticks.x=ggplot2::element_blank(),
+                axis.title.y=ggplot2::element_blank(),
                 #axis.title.x=element_blank(),
-                panel.background = element_blank(),
+                panel.background = ggplot2::element_blank(),
                 axis.line.x = element_line(color="black", size=0.5*resolution),
                 axis.line.y = element_line(color="black", size=0.5*resolution),
                 text = element_text(size=12*resolution)) +
@@ -524,12 +536,12 @@ makeDecisionTable <- function(data,
 
         barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
         PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
-          theme(axis.text.x=element_blank(),
+          theme(axis.text.x=ggplot2::element_blank(),
                 axis.text.y=element_text(size=10*resolution),
-                axis.ticks.x=element_blank(),
-                axis.title.y=element_blank(),
+                axis.ticks.x=ggplot2::element_blank(),
+                axis.title.y=ggplot2::element_blank(),
                 #axis.title.x=element_blank(),
-                panel.background = element_blank(),
+                panel.background = ggplot2::element_blank(),
                 axis.line.x = element_line(color="black", size=0.5*resolution),
                 axis.line.y = element_line(color="black", size=0.5*resolution),
                 text = element_text(size=12*resolution)) +
@@ -568,12 +580,12 @@ makeDecisionTable <- function(data,
 
       barplot <- ggplot2::ggplot(data=PlotData, ggplot2::aes(x=XX, y=YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
-        theme(axis.text.x=element_blank(),
+        theme(axis.text.x=ggplot2::element_blank(),
               axis.text.y=element_text(size=10*resolution),
-              axis.ticks.x=element_blank(),
-              axis.title.y=element_blank(),
+              axis.ticks.x=ggplot2::element_blank(),
+              axis.title.y=ggplot2::element_blank(),
               #axis.title.x=element_blank(),
-              panel.background = element_blank(),
+              panel.background = ggplot2::element_blank(),
               axis.line.x = element_line(color="black", size=0.5*resolution),
               axis.line.y = element_line(color="black", size=0.5*resolution),
               text=element_text(size=12*resolution)) +
@@ -605,12 +617,12 @@ makeDecisionTable <- function(data,
 
       barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
-        theme(axis.text.x=element_blank(),
+        theme(axis.text.x=ggplot2::element_blank(),
               axis.text.y=element_text(size=10*resolution),
-              axis.ticks.x=element_blank(),
-              axis.title.y=element_blank(),
+              axis.ticks.x=ggplot2::element_blank(),
+              axis.title.y=ggplot2::element_blank(),
               #axis.title.x=element_blank(),
-              panel.background = element_blank(),
+              panel.background = ggplot2::element_blank(),
               axis.line.x = element_line(color="black", size=0.5*resolution),
               axis.line.y = element_line(color="black", size=0.5*resolution),
               text = element_text(size=12*resolution)) +
@@ -642,12 +654,12 @@ makeDecisionTable <- function(data,
 
       barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
-        theme(axis.text.x=element_blank(),
+        theme(axis.text.x=ggplot2::element_blank(),
               axis.text.y=element_text(size=10*resolution),
-              axis.ticks.x=element_blank(),
-              axis.title.y=element_blank(),
+              axis.ticks.x=ggplot2::element_blank(),
+              axis.title.y=ggplot2::element_blank(),
               #axis.title.x=element_blank(),
-              panel.background = element_blank(),
+              panel.background = ggplot2::element_blank(),
               axis.line.x = element_line(color="black", size=0.5*resolution),
               axis.line.y = element_line(color="black", size=0.5*resolution),
               text = element_text(size=12*resolution)) +

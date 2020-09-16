@@ -3,13 +3,16 @@
 #' @import cowplot
 #' @import ggplot2
 #' @import ggplotify
+#' @import grDevices
 #' @import grid
 #' @import gridExtra
+#' @import here
 #' @import magick
 #' @import png
 #' @import raster
 #' @import rasterVis
 #' @import rgdal
+#' @import stats
 #' @import tibble
 #' @import tidyverse
 #' 
@@ -92,11 +95,25 @@
 #' rownames(data_df) <- c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6")
 #'
 #' # Decision table with efault graphic settings, custom title and headers
-#' makeDecisionTable(data = data_df, OutputFileName = "Example1", GraphicTitle = "Example decision table with default formatting", RowHeader = "Row header \n describes type \n of data in rows", ColumnHeader = "Column header describes type of data in columns")
-#' # Decision table with ranked coloring scheme, darker colors correspond with better (larger) values in each row
-#' makeDecisionTable(data = data_df, OutputFileName = "Example2", GraphicTitle = "Example decision table with ranked performance", RowHeader = "Row header \n describes type \n of data in rows", ColumnHeader = "Column header describes type of data in columns", BestPerformanceVector = rep("High", nrow(data_df)), barColors = "defaultRankColor", visualRank = "TRUE")
+#' makeDecisionTable(data = data_df, OutputFileName = "Example1", 
+#'                   GraphicTitle = "Example decision table with default formatting", 
+#'                   RowHeader = "Row header \n describes type \n of data in rows", 
+#'                   ColumnHeader = "Column header describes type of data in columns")
+#' # Decision table with ranked coloring scheme, darker colors correspond with 
+#' # better (larger) values in each row
+#' makeDecisionTable(data = data_df, OutputFileName = "Example2", 
+#'                   GraphicTitle = "Example decision table with ranked performance", 
+#'                   RowHeader = "Row header \n describes type \n of data in rows", 
+#'                   ColumnHeader = "Column header describes type of data in columns", 
+#'                   BestPerformanceVector = rep("High", nrow(data_df)), 
+#'                   barColors = "defaultRankColor", visualRank = "TRUE")
 #' # Decision table with summary row showing sum values for each column, single custom color.
-#' makeDecisionTable(data = data_df, OutputFileName = "Example3", GraphicTitle = "Example decision table with summary row", RowHeader = "Row header \n describes type \n of data in rows", ColumnHeader = "Column header describes type of data in columns", barColors = "cadetblue3", SummaryRowOption = "SumValue", SummaryBestPerformance = "High")
+#' makeDecisionTable(data = data_df, OutputFileName = "Example3", 
+#'                   GraphicTitle = "Example decision table with summary row", 
+#'                   RowHeader = "Row header \n describes type \n of data in rows", 
+#'                   ColumnHeader = "Column header describes type of data in columns", 
+#'                   barColors = "cadetblue3", SummaryRowOption = "SumValue", 
+#'                   SummaryBestPerformance = "High")
 #'
 
 
@@ -327,7 +344,9 @@ makeDecisionTable <- function(data,
           IconImage <- raster::raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
 
           # Plot icon
-          PlotIcon <- rasterVis::gplot(IconImage) + geom_tile(ggplot2::aes(colour = cut(value, breaks = c(-100,0,180,Inf)), fill=cut(value, breaks = c(-100,0,180,Inf)))) + # Alter middle number to change pixels coloring
+          PlotIcon <- IconImage %>% 
+            rasterVis::gplot() + 
+            geom_tile(ggplot2::aes(colour = raster::cut(.data$value, breaks = c(-100,0,180,Inf)), fill=raster::cut(.data$value, breaks = c(-100,0,180,Inf)))) + # Alter middle number to change pixels coloring
             ggplot2::scale_color_manual(name = "UniqueScale",
                                values = c("(0,180]" = IconColor,
                                           "(180,Inf]" = "white",
@@ -387,7 +406,9 @@ makeDecisionTable <- function(data,
         IconImage <- raster::raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
 
         # Plot icon
-        PlotIcon <- rasterVis::gplot(IconImage) + geom_tile(ggplot2::aes(colour = cut(value, c(0,180,Inf)), fill=cut(value, c(0,180,Inf)))) +
+        PlotIcon <- IconImage %>%
+          rasterVis::gplot() + 
+          geom_tile(ggplot2::aes(colour = cut(.data$value, c(0,180,Inf)), fill=cut(.data$value, c(0,180,Inf)))) +
           ggplot2::scale_color_manual(name = "UniqueScale",
                              values = c("(0,180]" = IconColor,
                                         "(180,Inf]" = "white"),breaks=NULL, na.value=IconColor) +
@@ -480,10 +501,10 @@ makeDecisionTable <- function(data,
     if(IncludeCI == "TRUE"){
       # Make sure CI data in correct format (matrix)
       if(is.matrix(Data_LowerCI)==FALSE & is.data.frame(Data_LowerCI)==FALSE & tibble::is_tibble(Data_LowerCI)==FALSE){
-        Data_LowerCI <- matrix(Data_LowerCI, ...)
+        Data_LowerCI <- matrix(data = Data_LowerCI, nrow = nrow, ncol = ncol)
       }
       if(is.matrix(Data_UpperCI)==FALSE & is.data.frame(Data_UpperCI)==FALSE & tibble::is_tibble(Data_UpperCI)==FALSE){
-        Data_UpperCI <- matrix(Data_UpperCI, ...)
+        Data_UpperCI <- matrix(data = Data_UpperCI, nrow = nrow, ncol = ncol)
       }
 
       # Format & produce barplots
@@ -502,7 +523,7 @@ makeDecisionTable <- function(data,
           Max_Y <- max(Data_UpperCI, data) # Pick max y-axis value either from the Data_UpperCI table or the data itself
         }
 
-        barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
+        barplot <- ggplot2::ggplot(data = PlotData, ggplot2::aes(x=.data$XX, y=.data$YY))
         PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
           geom_errorbar(limits, width = 0.25, size=0.5*resolution) +
           theme(axis.text.x=ggplot2::element_blank(),
@@ -534,7 +555,7 @@ makeDecisionTable <- function(data,
           Max_Y <- max(data) # Pick max y-axis value either from the Data_UpperCI table or the data itself
         }
 
-        barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
+        barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=.data$XX, y=.data$YY))
         PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
           theme(axis.text.x=ggplot2::element_blank(),
                 axis.text.y=element_text(size=10*resolution),
@@ -578,7 +599,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot2::ggplot(data=PlotData, ggplot2::aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(data=PlotData, ggplot2::aes(x=.data$XX, y=.data$YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=ggplot2::element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -615,7 +636,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=.data$XX, y=.data$YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=ggplot2::element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -652,7 +673,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=.data$XX, y=.data$YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=ggplot2::element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -695,7 +716,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=.data$XX, y=.data$YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -738,7 +759,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=.data$XX, y=.data$YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -781,7 +802,7 @@ makeDecisionTable <- function(data,
       colnames(PlotData) <- c("XX", "YY")
       PlotColor <- barColors[SummaryRankOrder[icol]]
 
-      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=XX, y=YY))
+      barplot <- ggplot2::ggplot(PlotData, ggplot2::aes(x=.data$XX, y=.data$YY))
       PrettyBarPlot <- barplot + geom_col(fill = PlotColor) +
         theme(axis.text.x=element_blank(),
               axis.text.y=element_text(size=10*resolution),
@@ -856,7 +877,7 @@ makeDecisionTable <- function(data,
   gridExtra::grid.arrange(grobs = GridList, layout_matrix = matrix(graphicFormat$graphicLayout, nrow = graphicFormat$graphicNrow, ncol = graphicFormat$graphicNcol, byrow = TRUE), widths = GraphicWidths, heights = GraphicHeights, nrow = graphicFormat$graphicNrow, ncol = graphicFormat$graphicNcol, byrow = TRUE)
   #gridExtra::grid.arrange(grobs = GridList, layout_matrix = graphicFormat$graphicLayout, widths = GraphicWidths, heights = GraphicHeights,  byrow = TRUE)
 
-  dev.off()
+  grDevices::dev.off()
 }
 
 

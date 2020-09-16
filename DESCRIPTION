@@ -9,18 +9,21 @@ Description: This package produces customized decision tables for use in fishery
      printed next to the title, and a summary row can be automatically calculated and 
      added to the decision table as specified. 
 Depends: R (>= 3.4.0)
-Imports: ggplot2,
+Imports: cowplot,
+     ggplot2,
      ggplotify,
+     grDevices,
      grid,
      gridExtra,
+     here,
+     magick,
+     png,
      raster,
      rasterVis,
-     png,
      rgdal,
+     stats,
      tibble,
-     tidyverse,
-     cowplot,
-     magick
+     tidyverse
 License: BSD_2_clause + file LICENSE
 Encoding: UTF-8
 LazyData: true

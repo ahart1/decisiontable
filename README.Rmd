@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 The goal of decisiontable is to combine text-based tables with graphical elements to produce flexible decision table visualizations that convey trade-offs and are easily reproduced. The package leverages bar plots, coloring options, layout choices, and optional summary information to highlight and display trade-offs.
-```{r include=FALSE}
+```{r, include=FALSE}
 # Should have same code as below, evaluated but not included in Rmd output
 library(decisiontable)
 
@@ -55,7 +55,7 @@ And the development version from [GitHub](https://github.com/) with:
 -->
 You can install the development version of decisiontable from [GitHub](https://github.com/) with:
 
-```{r}
+```{r, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("ahart1/decisiontable")
 ```
@@ -85,8 +85,7 @@ makeDecisionTable(data = data_df,
 ![Decision table created using the dataframe option](Readme_Fig2.png)
 
 To get an introduction to other features of the package, read the introductory vignette.
-```{r, inclShow in New WindowClear OutputExpand/Collapse Output
-no vignettes foundude = FALSE}
+```{r, eval = FALSE}
 vignette("decisiontable", package = "decisiontable")
 ```
 

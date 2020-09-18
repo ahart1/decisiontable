@@ -242,6 +242,7 @@ Up to 3 icons can be printed to the right of the decision table title using the 
 
 
 Package icons
+
 - "Commercial_Fisheries_Herring_Mackerel_Lobster"
 ```{r, out.width = "100px", echo=FALSE}
 knitr::include_graphics(here::here("vignettes/Commercial_Fisheries_Herring_Mackerel_Lobster.png"))

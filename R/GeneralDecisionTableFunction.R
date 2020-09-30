@@ -265,7 +265,7 @@ makeDecisionTable <- function(data,
   # Set bar colors
   if(is.null(barColors)==TRUE){
     barColors <- c(rep("grey47", ncol(data)))
-  } else if(barColors=="defaultRankColor") {
+  } else if(any(barColors == "defaultRankColor")) { # Produces warning if any() isn't used, see https://stackoverflow.com/questions/14170778/interpreting-condition-has-length-1-warning-from-if-function for explanation
     if(ncol(data)==1){
       barColors <- c("#238443")
     } else if(ncol(data)==2){
@@ -311,8 +311,10 @@ makeDecisionTable <- function(data,
     } # End of defaultRankColor
   } else if(length(barColors)==1){ # If a single color is used
     barColors <- c(rep(barColors, ncol(data)))
-  } else {
+  } else if(length(barColors) == ncol(data)){ # If a list of colors is provided equal in length to the number of columns in the data
     barColors <- barColors
+  } else { # print a warning that not the list of custom colors does not match the number of columns so colors will be repeated/meaningless
+    warning("Default coloring options were not used and the provided list of custom colors is not equal in length to the number of data columns.")
   }
 
 

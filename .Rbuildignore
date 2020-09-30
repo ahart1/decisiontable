@@ -1,2 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^doc$
+^Meta$
+README.md
+README.Rmd
+Readme_Fig1.png
+Readme_Fig2.png

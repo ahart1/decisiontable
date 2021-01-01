@@ -9,13 +9,14 @@
 #' @import here
 #' @import magick
 #' @import png
-#' @import raster
+#' @importFrom raster raster
+#' @importFrom raster cut
 #' @import rasterVis
 #' @import rgdal
 #' @import stats
 #' @import tibble
 #' @import tidyverse
-#' 
+#'
 #' @title Produce generalized decision tables with provided confidence intervals (optional) on bars.
 #'
 #' @description
@@ -95,27 +96,27 @@
 #' rownames(data_df) <- c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6")
 #'
 #' # Decision table with efault graphic settings, custom title and headers
-#' makeDecisionTable(data = data_df, OutputFileName = "Example1", 
+#' makeDecisionTable(data = data_df, OutputFileName = "Example1",
 #'                   OutputDirectory = tempdir(),
-#'                   GraphicTitle = "Example decision table with default formatting", 
-#'                   RowHeader = "Row header \n describes type \n of data in rows", 
+#'                   GraphicTitle = "Example decision table with default formatting",
+#'                   RowHeader = "Row header \n describes type \n of data in rows",
 #'                   ColumnHeader = "Column header describes type of data in columns")
-#' # Decision table with ranked coloring scheme, darker colors correspond with 
+#' # Decision table with ranked coloring scheme, darker colors correspond with
 #' # better (larger) values in each row
-#' makeDecisionTable(data = data_df, OutputFileName = "Example2", 
+#' makeDecisionTable(data = data_df, OutputFileName = "Example2",
 #'                   OutputDirectory = tempdir(),
-#'                   GraphicTitle = "Example decision table with ranked performance", 
-#'                   RowHeader = "Row header \n describes type \n of data in rows", 
-#'                   ColumnHeader = "Column header describes type of data in columns", 
-#'                   BestPerformanceVector = rep("High", nrow(data_df)), 
+#'                   GraphicTitle = "Example decision table with ranked performance",
+#'                   RowHeader = "Row header \n describes type \n of data in rows",
+#'                   ColumnHeader = "Column header describes type of data in columns",
+#'                   BestPerformanceVector = rep("High", nrow(data_df)),
 #'                   barColors = "defaultRankColor", visualRank = "TRUE")
 #' # Decision table with summary row showing sum values for each column, single custom color.
-#' makeDecisionTable(data = data_df, OutputFileName = "Example3", 
+#' makeDecisionTable(data = data_df, OutputFileName = "Example3",
 #'                   OutputDirectory = tempdir(),
-#'                   GraphicTitle = "Example decision table with summary row", 
-#'                   RowHeader = "Row header \n describes type \n of data in rows", 
-#'                   ColumnHeader = "Column header describes type of data in columns", 
-#'                   barColors = "cadetblue3", SummaryRowOption = "SumValue", 
+#'                   GraphicTitle = "Example decision table with summary row",
+#'                   RowHeader = "Row header \n describes type \n of data in rows",
+#'                   ColumnHeader = "Column header describes type of data in columns",
+#'                   barColors = "cadetblue3", SummaryRowOption = "SumValue",
 #'                   SummaryBestPerformance = "High")
 #'
 
@@ -346,12 +347,12 @@ makeDecisionTable <- function(data,
          # raster IconImage is from .RData file
           print(paste("Icon", IconList[icon], sep="_"))
           IconImage <- eval(parse(text = paste("Icon", IconList[icon], sep="_")))
-          IconImage <- raster::raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
+          IconImage <- raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
 
           # Plot icon
-          PlotIcon <- IconImage %>% 
-            rasterVis::gplot() + 
-            geom_tile(ggplot2::aes(colour = raster::cut(.data$value, breaks = c(-100,0,180,Inf)), fill=raster::cut(.data$value, breaks = c(-100,0,180,Inf)))) + # Alter middle number to change pixels coloring
+          PlotIcon <- IconImage %>%
+            rasterVis::gplot() +
+            geom_tile(ggplot2::aes(colour = cut(.data$value, breaks = c(-100,0,180,Inf)), fill=cut(.data$value, breaks = c(-100,0,180,Inf)))) + # Alter middle number to change pixels coloring
             ggplot2::scale_color_manual(name = "UniqueScale",
                                values = c("(0,180]" = IconColor,
                                           "(180,Inf]" = "white",
@@ -408,11 +409,11 @@ makeDecisionTable <- function(data,
         # raster IconImage is from .RData file
         print(paste("Icon", IconList[icon], sep="_"))
         IconImage <- eval(parse(text = paste("Icon", IconList[icon], sep="_")))
-        IconImage <- raster::raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
+        IconImage <- raster(IconImage, layer=1, values=TRUE) # Change from "SpatialPixelsDataFrame" to raster format
 
         # Plot icon
         PlotIcon <- IconImage %>%
-          rasterVis::gplot() + 
+          rasterVis::gplot() +
           geom_tile(ggplot2::aes(colour = cut(.data$value, c(0,180,Inf)), fill=cut(.data$value, c(0,180,Inf)))) +
           ggplot2::scale_color_manual(name = "UniqueScale",
                              values = c("(0,180]" = IconColor,

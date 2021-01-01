@@ -4,7 +4,9 @@
 \name{Icon_Environmental_Considerations}
 \alias{Icon_Environmental_Considerations}
 \title{Raster data to display the Environmental Considerations Icon}
-\format{An object of class \code{SpatialPixelsDataFrame} with 1788600 rows and 1 columns.}
+\format{
+An object of class \code{SpatialPixelsDataFrame} with 17952 rows and 1 columns.
+}
 \usage{
 Icon_Environmental_Considerations
 }

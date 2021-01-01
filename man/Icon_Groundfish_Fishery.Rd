@@ -4,7 +4,9 @@
 \name{Icon_Groundfish_Fishery}
 \alias{Icon_Groundfish_Fishery}
 \title{Raster data to display the Groundfish Fishery Icon}
-\format{An object of class \code{SpatialPixelsDataFrame} with 1626844 rows and 1 columns.}
+\format{
+An object of class \code{SpatialPixelsDataFrame} with 16383 rows and 1 columns.
+}
 \usage{
 Icon_Groundfish_Fishery
 }

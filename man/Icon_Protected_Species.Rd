@@ -4,7 +4,9 @@
 \name{Icon_Protected_Species}
 \alias{Icon_Protected_Species}
 \title{Raster data to display the Protected Species Icon}
-\format{An object of class \code{SpatialPixelsDataFrame} with 1734324 rows and 1 columns.}
+\format{
+An object of class \code{SpatialPixelsDataFrame} with 17408 rows and 1 columns.
+}
 \usage{
 Icon_Protected_Species
 }

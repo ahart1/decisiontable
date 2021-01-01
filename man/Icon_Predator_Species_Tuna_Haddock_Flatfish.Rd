@@ -4,7 +4,9 @@
 \name{Icon_Predator_Species_Tuna_Haddock_Flatfish}
 \alias{Icon_Predator_Species_Tuna_Haddock_Flatfish}
 \title{Raster data to display the Predator Species Icon for Tuna, Haddock, and Flatfish}
-\format{An object of class \code{SpatialPixelsDataFrame} with 1768275 rows and 1 columns.}
+\format{
+An object of class \code{SpatialPixelsDataFrame} with 17816 rows and 1 columns.
+}
 \usage{
 Icon_Predator_Species_Tuna_Haddock_Flatfish
 }

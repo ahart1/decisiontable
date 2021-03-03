@@ -4,7 +4,9 @@
 \name{Icon_Primary_Production}
 \alias{Icon_Primary_Production}
 \title{Raster data to display the Primary Production Icon}
-\format{An object of class \code{SpatialPixelsDataFrame} with 1673100 rows and 1 columns.}
+\format{
+An object of class \code{SpatialPixelsDataFrame} with 16770 rows and 1 columns.
+}
 \usage{
 Icon_Primary_Production
 }

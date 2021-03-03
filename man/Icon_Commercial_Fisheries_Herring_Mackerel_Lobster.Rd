@@ -4,7 +4,9 @@
 \name{Icon_Commercial_Fisheries_Herring_Mackerel_Lobster}
 \alias{Icon_Commercial_Fisheries_Herring_Mackerel_Lobster}
 \title{Raster data to display the Commercial Fisheries Icon for Herring, Mackerel, and Lobster}
-\format{An object of class \code{SpatialPixelsDataFrame} with 1729000 rows and 1 columns.}
+\format{
+An object of class \code{SpatialPixelsDataFrame} with 17290 rows and 1 columns.
+}
 \usage{
 Icon_Commercial_Fisheries_Herring_Mackerel_Lobster
 }

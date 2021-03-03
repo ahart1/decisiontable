@@ -4,7 +4,9 @@
 \name{Icon_Lobster}
 \alias{Icon_Lobster}
 \title{Raster data to display the Lobster Icon}
-\format{An object of class \code{SpatialPixelsDataFrame} with 1688644 rows and 1 columns.}
+\format{
+An object of class \code{SpatialPixelsDataFrame} with 17030 rows and 1 columns.
+}
 \usage{
 Icon_Lobster
 }

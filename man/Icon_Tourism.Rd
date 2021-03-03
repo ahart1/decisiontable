@@ -4,7 +4,9 @@
 \name{Icon_Tourism}
 \alias{Icon_Tourism}
 \title{Raster data to display the Tourism Icon}
-\format{An object of class \code{SpatialPixelsDataFrame} with 1708224 rows and 1 columns.}
+\format{
+An object of class \code{SpatialPixelsDataFrame} with 17280 rows and 1 columns.
+}
 \usage{
 Icon_Tourism
 }

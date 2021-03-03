@@ -4,7 +4,9 @@
 \name{Icon_Herring_Fishery_Option2}
 \alias{Icon_Herring_Fishery_Option2}
 \title{Raster data to display the Herring Fishery Icon Option 2}
-\format{An object of class \code{SpatialPixelsDataFrame} with 1734750 rows and 1 columns.}
+\format{
+An object of class \code{SpatialPixelsDataFrame} with 17415 rows and 1 columns.
+}
 \usage{
 Icon_Herring_Fishery_Option2
 }

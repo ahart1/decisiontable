@@ -4,17 +4,36 @@
 \alias{makeDecisionTable}
 \title{Produce generalized decision tables with provided confidence intervals (optional) on bars.}
 \usage{
-makeDecisionTable(data, rownames = NULL, colnames = NULL,
-  nrow = NULL, ncol = NULL, byrow = TRUE,
-  OutputDirectory = getwd(), OutputFileName = "DecisionTable",
-  GraphicTitle = "Title", RowHeader = "Row_Header",
-  ColumnHeader = "Column_Header", figureWidth = 500,
-  figureHeight = 800, resolution = 1, graphicCellWidths = NULL,
-  graphicCellHeight = NULL, barWidth = 1, yscalerow = "FALSE",
-  SummaryRowOption = "Off", visualRank = "FALSE",
-  BestPerformanceVector = NULL, SummaryBestPerformance = NULL,
-  barColors = NULL, IncludeCI = "FALSE", Data_UpperCI = NULL,
-  Data_LowerCI = NULL, IconList = NULL, IconColor = "black")
+makeDecisionTable(
+  data,
+  rownames = NULL,
+  colnames = NULL,
+  nrow = NULL,
+  ncol = NULL,
+  byrow = TRUE,
+  OutputDirectory = getwd(),
+  OutputFileName = "DecisionTable",
+  GraphicTitle = "Title",
+  RowHeader = "Row_Header",
+  ColumnHeader = "Column_Header",
+  figureWidth = 500,
+  figureHeight = 800,
+  resolution = 1,
+  graphicCellWidths = NULL,
+  graphicCellHeight = NULL,
+  barWidth = 1,
+  yscalerow = "FALSE",
+  SummaryRowOption = "Off",
+  visualRank = "FALSE",
+  BestPerformanceVector = NULL,
+  SummaryBestPerformance = NULL,
+  barColors = NULL,
+  IncludeCI = "FALSE",
+  Data_UpperCI = NULL,
+  Data_LowerCI = NULL,
+  IconList = NULL,
+  IconColor = "black"
+)
 }
 \arguments{
 \item{data}{A data matrix with dimensions matching the desired decision table or a vector equal in length to the number of cells in the desired decision table. By default vectors will fill the table by column according to the dimensions specified by `nrow` and `ncol` arguments, no default.}
@@ -120,24 +139,27 @@ colnames(data_df) <- c("Column 1", "Column 2", "Column 3", "Column 4", "Column 5
 rownames(data_df) <- c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6")
 
 # Decision table with efault graphic settings, custom title and headers
-makeDecisionTable(data = data_df, OutputFileName = "Example1", 
-                  GraphicTitle = "Example decision table with default formatting", 
-                  RowHeader = "Row header \\n describes type \\n of data in rows", 
+makeDecisionTable(data = data_df, OutputFileName = "Example1",
+                  OutputDirectory = tempdir(),
+                  GraphicTitle = "Example decision table with default formatting",
+                  RowHeader = "Row header \n describes type \n of data in rows",
                   ColumnHeader = "Column header describes type of data in columns")
-# Decision table with ranked coloring scheme, darker colors correspond with 
+# Decision table with ranked coloring scheme, darker colors correspond with
 # better (larger) values in each row
-makeDecisionTable(data = data_df, OutputFileName = "Example2", 
-                  GraphicTitle = "Example decision table with ranked performance", 
-                  RowHeader = "Row header \\n describes type \\n of data in rows", 
-                  ColumnHeader = "Column header describes type of data in columns", 
-                  BestPerformanceVector = rep("High", nrow(data_df)), 
+makeDecisionTable(data = data_df, OutputFileName = "Example2",
+                  OutputDirectory = tempdir(),
+                  GraphicTitle = "Example decision table with ranked performance",
+                  RowHeader = "Row header \n describes type \n of data in rows",
+                  ColumnHeader = "Column header describes type of data in columns",
+                  BestPerformanceVector = rep("High", nrow(data_df)),
                   barColors = "defaultRankColor", visualRank = "TRUE")
 # Decision table with summary row showing sum values for each column, single custom color.
-makeDecisionTable(data = data_df, OutputFileName = "Example3", 
-                  GraphicTitle = "Example decision table with summary row", 
-                  RowHeader = "Row header \\n describes type \\n of data in rows", 
-                  ColumnHeader = "Column header describes type of data in columns", 
-                  barColors = "cadetblue3", SummaryRowOption = "SumValue", 
+makeDecisionTable(data = data_df, OutputFileName = "Example3",
+                  OutputDirectory = tempdir(),
+                  GraphicTitle = "Example decision table with summary row",
+                  RowHeader = "Row header \n describes type \n of data in rows",
+                  ColumnHeader = "Column header describes type of data in columns",
+                  barColors = "cadetblue3", SummaryRowOption = "SumValue",
                   SummaryBestPerformance = "High")
 
 }

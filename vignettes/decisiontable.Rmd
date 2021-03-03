@@ -25,7 +25,7 @@ library(decisiontable)
 
 Decision tables serve a critical role in making comparisons, assessing trade-offs, and communicating consequences to decision makers. The decisiontable package combines more traditional text-based tables and graphical elements to provide a flexible visualization of data that can be tailored to the needs of different decision-making audiences. 
 
-The following introduction highlights flexible features of this package that alow alternate data input formats, labels, coloring options, layout choices, icons and summary information.
+The following introduction highlights flexible features of this package that allow alternate data input formats, labels, coloring options, layout choices, icons and summary information.
 
 ## Output
 The `makeDecisionTable` function produces a decision table that expands the cells of a traditional text-based table to also include bar charts with heights corresponding to the text value, and customizable labels, coloring options, layout, icons, and summary information. By default, each decision table is saved as a .png image to the user's working directory under the name provided to the `OutputFileName` argument or another directory may be specified using the `OutputDirectory` argument. 
@@ -143,7 +143,7 @@ knitr::include_graphics(here::here("vignettes/Custom_Single-Color_Option.png"))
 ```
 
 ### 2) Use pre-specified ranked-coloring option
-For tables containing up to 20 rows and 20 columns there is a pre-specified ranked-coloring option that visually reflects the relative ranked formance. To utilize this option, `visualRank` must be set to "TRUE", the `barColors` argument must be set to "defaultRankColor", and users must provide a `BestPeformanceVector`  that indicates weather a "High" value corresponds with best performance or if a "Low" data value corresponds with best performance. 
+For tables containing up to 20 rows and 20 columns there is a pre-specified ranked-coloring option that visually reflects the relative ranked performance. To utilize this option, `visualRank` must be set to "TRUE", the `barColors` argument must be set to "defaultRankColor", and users must provide a `BestPeformanceVector`  that indicates weather a "High" value corresponds with best performance or if a "Low" data value corresponds with best performance. 
 ```{r}
 # Decision table with a pre-specified ranked-coloring scheme
 makeDecisionTable(data = data_df,

@@ -66,7 +66,7 @@
 #'      "MedianValue"  = Summary row added, values represent median value of Data across all rows in each column, high/low value corresponding with best performance must be specified
 
 #'      "WhiskerPlot"  = Summary row added, box and whisker plot summarizes data contained in each column, high/low value corresponding with best performance must be specified
-#' @param visualRank A string specifying the use of color to visually show ranked relative performance, if = "TRUE" then `BestPerformanceVector` and `SummaryBestPerformance` (if summary row included) must be provided and the `barColors` argument should be set to "defaultRankColor" or provided a vector of unique colors equal in lenght to the number of columns. Default = "FALSE"
+#' @param visualRank A string specifying the use of color to visually show ranked relative performance, if = "TRUE" then `BestPerformanceVector` and `SummaryBestPerformance` (if summary row included) must be provided and the `barColors` argument should be set to "defaultRankColor" or provided a vector of unique colors equal in length to the number of columns. Default = "FALSE"
 #' @param BestPerformanceVector A vector equal in length to the number of rows in Data containing "High" or "Low". Default = NULL.
 #'      "High" = highest value in row will be colored to represent best performance
 #'      "Low" = lowest value in row will be colored to represent best performance

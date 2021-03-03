@@ -2,7 +2,7 @@ Package: decisiontable
 Title: Make Customized Decision Tables 
 Version: 0.3
 Authors@R: person("Amanda R.", "Hart", email = "ahart2@umassd.edu", role = c("aut", "cre"))
-Description: This package produces customized decision tables for use in fishery and
+Description: Produce customized decision tables for use in fishery and
      natural resource management. Decision tables can be customized to contain between
      1 and 20 rows or columns of data. Labels, colors, performance ranking, image size 
      and resolution can be adjusted as desired. Additionally, up to three icons may be

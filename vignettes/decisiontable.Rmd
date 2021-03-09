@@ -260,7 +260,7 @@ knitr::include_graphics(here::here("vignettes/Groundfish_Fishery.png"))
 
 - "Groundfish_Species" 
 ```{r, out.width = "100px", echo=FALSE}
-knitr::include_graphics(here::here("/vignettes/Groundfish_Species.png"))
+knitr::include_graphics(here::here("vignettes/Groundfish_Species.png"))
 ```
 
 - "Herring_Fishery_Option1" 

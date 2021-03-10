@@ -95,7 +95,7 @@
 #' colnames(data_df) <- c("Column 1", "Column 2", "Column 3", "Column 4", "Column 5")
 #' rownames(data_df) <- c("Row 1", "Row 2", "Row 3", "Row 4", "Row 5", "Row 6")
 #'
-#' # Decision table with efault graphic settings, custom title and headers
+#' # Decision table with default graphic settings, custom title and headers
 #' makeDecisionTable(data = data_df, OutputFileName = "Example1",
 #'                   OutputDirectory = tempdir(),
 #'                   GraphicTitle = "Example decision table with default formatting",

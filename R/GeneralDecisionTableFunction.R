@@ -98,14 +98,14 @@
 #' # Decision table with default graphic settings, custom title and headers
 #' makeDecisionTable(data = data_df, OutputFileName = "Example1",
 #'                   OutputDirectory = getwd(),
-#'                   GraphicTitle = "Example decision table with default formatting",
+#'                   GraphicTitle = "Decision table with default formatting",
 #'                   RowHeader = "Row header \n describes type \n of data in rows",
 #'                   ColumnHeader = "Column header describes type of data in columns")
 #' # Decision table with ranked coloring scheme, darker colors correspond with
 #' # better (larger) values in each row
 #' makeDecisionTable(data = data_df, OutputFileName = "Example2",
 #'                   OutputDirectory = getwd(),
-#'                   GraphicTitle = "Example decision table with ranked performance",
+#'                   GraphicTitle = "Decision table with ranked performance",
 #'                   RowHeader = "Row header \n describes type \n of data in rows",
 #'                   ColumnHeader = "Column header describes type of data in columns",
 #'                   BestPerformanceVector = rep("High", nrow(data_df)),
@@ -113,7 +113,7 @@
 #' # Decision table with summary row showing sum values for each column, single custom color.
 #' makeDecisionTable(data = data_df, OutputFileName = "Example3",
 #'                   OutputDirectory = getwd(),
-#'                   GraphicTitle = "Example decision table with summary row",
+#'                   GraphicTitle = "Decision table with summary row",
 #'                   RowHeader = "Row header \n describes type \n of data in rows",
 #'                   ColumnHeader = "Column header describes type of data in columns",
 #'                   barColors = "cadetblue3", SummaryRowOption = "SumValue",
